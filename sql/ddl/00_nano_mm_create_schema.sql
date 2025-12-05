@@ -1,0 +1,24 @@
+-- =====================================================================
+-- Project : nano-mm-oltp
+-- File    : 00_nano_mm_create_schema.sql
+-- Purpose : Create the nano_mm schema used to store all OLTP core tables
+--           for the SAP MM–inspired Procure-to-Pay data model.
+--
+-- Description:
+--   This script initializes the logical database namespace for the
+--   nano_mm operational schema. It is responsible only for:
+--     - Creating the nano_mm schema if it does not already exist
+--     - Optionally setting basic schema-level properties (e.g. owner)
+--
+--   All table definitions, constraints, indexes and seeds are defined
+--   in subsequent scripts (e.g. 01_nano_mm_create_tables.sql).
+--
+-- Execution context:
+--   Automatically executed by Postgres via /docker-entrypoint-initdb.d
+--   during container initialization. This script is idempotent and can
+--   be safely re-run without causing schema duplication errors.
+--
+-- Author  : Stathis Vlachos
+-- =====================================================================
+
+CREATE SCHEMA IF NOT EXISTS nano_mm;
