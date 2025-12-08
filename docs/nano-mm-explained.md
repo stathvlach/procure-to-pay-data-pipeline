@@ -69,6 +69,91 @@ users. It plays no functional role beyond identification and clarity.
   Indicates the country in which the plant is located. This value influences taxation rules, international goods 
 movement processes, and logistical constraints across procurement and inventory operations.
 
+## T005 – Country Keys
+
+The `T005` table provides the reference list of countries used across the nano-mm schema. It centralizes country codes
+and their descriptive names so that organizational units and business partners can refer to a consistent set of values.
+Rather than storing free-text country information on each table, `T005` acts as a shared lookup, improving data quality
+and enabling standardized reporting. In real SAP systems, country keys influence important behavior such as tax logic,
+address formatting, and regulatory checks. In this project’s simplified model, `T005` focuses on identifying countries
+as dimensions that can be joined from company codes, plants, and vendors. This allows analytics such as spend by
+country, vendor distribution by region, or cross-company procurement patterns grouped by geography. By separating
+country master data from transactional tables, `T005` reinforces a clean distinction between reference data and
+operational records, which is a best practice in data modeling and data warehousing.
+
+### Cryptic Name: Why “T005”?
+
+As with other SAP customizing tables, the prefix **T** indicates configuration or reference data rather than
+transactional records. The numeric part **005** was assigned early in the Financial Accounting domain for
+country-related settings and has been carried forward historically. “T005” is therefore recognized as the central
+country key table across many SAP modules.
+
+### Field Explanations
+
+- **LAND1** (***LAND*** → Country Key)
+  The country code used throughout the schema (for example, on company codes, plants, and vendors). It typically follows
+ISO-style codes and acts as the primary key of the table.
+
+- **LANDX** – Country Name
+  The descriptive name of the country. Used in reports, user interfaces, and analytics to present human-readable country
+information instead of raw codes.
+
+## T006 – Units of Measure
+
+The `T006` table defines the set of allowed units of measure used across the nano-mm model. Instead of allowing
+arbitrary textual units, the schema relies on this reference list to ensure that quantities are expressed consistently.
+Units from `T006` are referenced in material master data and in transactional tables that carry quantities, such as
+purchase order items, material movements, and invoice items. This design reflects typical SAP behavior, where UoM
+configuration is centralized and conversions between units are derived from predefined relationships. In this simplified
+model, `T006` focuses on the core requirement: giving each unit a stable key and a clear description. This is sufficient
+to support realistic scenarios like ordering in one unit and valuating in another, while keeping the schema compact.
+From an analytics perspective, `T006` provides a clean dimension for grouping and interpreting quantities, making
+numerical data easier to understand and compare across documents and processes.
+
+### Cryptic Name: Why “T006”?
+
+The table name **T006** follows the SAP convention where **T** denotes a customizing or configuration table. The number
+**006** was historically assigned to units-of-measure configuration. Over time, “T006” became the canonical table for
+unit-of-measure definitions that many modules rely on when handling quantities.
+
+### Field Explanations
+
+- **MEINS** (***ME**ngen**EIN**heit → Unit of Measure)
+  The unit-of-measure key, such as EA (each), KG (kilogram), or M (meter). It is the primary key of the table and is
+referenced by material master data and quantity-bearing transactional tables.
+
+- **MTEXT** – Unit Description
+  A human-readable description of the unit of measure, such as “Each”, “Kilogram”, or “Meter”. Used in reports and UIs
+to make unit codes understandable to business users.
+
+## T156 – Movement Types
+
+The `T156` table defines movement types, which classify how stock moves within the system. Movement types determine the
+business meaning of a material movement, such as goods receipt from a purchase order, goods issue to consumption, or
+transfer between storage locations. In the nano-mm model, `T156` serves as the reference list for the `BWART` codes
+stored in material document items (MSEG). This separation between reference definitions and transactional usage keeps
+the schema clean and allows movement type semantics to be maintained in one place. In operational terms, movement types
+drive how quantities and values are updated, whether a movement creates or reverses stock, and how it should be
+interpreted analytically. For this project, `T156` enables realistic categorization of logistics events, supporting
+analyses such as receipts versus issues, reversal patterns, and stock transfer behavior. It also provides a clear entry
+point for extending the model with more detailed movement logic in the future.
+
+### Cryptic Name: Why “T156”?
+
+The prefix **T** again indicates a customizing or configuration table. The number **156** was allocated within Materials
+Management to represent movement-type control and has remained stable across SAP releases. “T156” is therefore
+recognized as the core configuration table for movement types used by inventory and logistics processes.
+
+### Field Explanations
+
+- **BWART** (***BEW**egungs**ART** → Movement Type)
+  The movement type code that classifies a material movement, such as goods receipt, goods issue, or transfer posting.
+It is the primary key of the table and is referenced from MSEG.
+
+- **BTEXT** – Movement Type Description
+  A textual description of the movement type. Makes the meaning of BWART codes understandable in reports and user
+interfaces, e.g., “Goods receipt for purchase order”.
+
 ## MARA – General Material Master Data
 
 The `MARA` table forms the central definition of a material within the nano-mm model. It stores attributes that are 
