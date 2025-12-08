@@ -1,12 +1,12 @@
 -- =====================================================================
--- Project : nano-mm-oltp
+-- Project : nano-mm
 -- File    : 01_nano_mm_create_tables.sql
--- Purpose : Create all core OLTP tables in the nano_mm schema
+-- Purpose : Create all core tables in the nano_mm schema
 --           (master data + transactional structures).
 --
 -- Description:
 --   This script defines the full set of operational tables that form the
---   nano_mm OLTP data model inspired by SAP MM (Materials Management).
+--   nano_mm data model inspired by SAP MM (Materials Management).
 --   It includes:
 --     - Master data entities (company codes, plants, vendors, materials)
 --     - Procurement process tables (purchase orders, goods receipts,
@@ -64,11 +64,35 @@ CREATE TABLE t006 (
     mtext VARCHAR(50) NOT NULL       -- UoM text (long description)
 );
 
+-- T023 – Material Groups.
+-- Stores material group codes and their descriptive texts used to
+-- categorize materials in the MARA master data table.
+CREATE TABLE t023 (
+    matkl VARCHAR(9)  PRIMARY KEY,   -- Material group
+    wgbez VARCHAR(40) NOT NULL       -- Material group description
+);
+
+-- T134 – Material Types.
+-- Stores material type codes and their descriptions used to classify
+-- materials in the MARA master data table.
+CREATE TABLE t134 (
+    mtart VARCHAR(4) PRIMARY KEY,   -- Material type
+    mtbez VARCHAR(40) NOT NULL      -- Material type description
+);
+
 -- T156 – Movement Types.
 -- Stores movement type definitions used to classify material and stock movements.
 CREATE TABLE t156 (
     bwart VARCHAR(3) PRIMARY KEY,     -- Movement type
     btext VARCHAR(60) NOT NULL        -- Movement type description
+);
+
+-- CSKS – Cost Center Master Data.
+-- Stores cost center identifiers, their company code assignment, and descriptive names.
+CREATE TABLE csks (
+    kostl VARCHAR(10) PRIMARY KEY,  -- Cost center
+    bukrs VARCHAR(4)  NOT NULL,     -- Company code
+    ktext VARCHAR(40) NOT NULL      -- Cost center name (short text)
 );
 
 -- MARA – General Material Master Data.
@@ -86,15 +110,7 @@ CREATE TABLE mard (
     matnr VARCHAR(40)  NOT NULL,         -- Material number
     werks VARCHAR(4)   NOT NULL,         -- Plant
     lgort VARCHAR(4)   NOT NULL,         -- Storage location
-    labst NUMERIC(13,3) NOT NULL,        -- Valuated unrestricted-use stock
-
-    CONSTRAINT mard_pkey PRIMARY KEY (matnr, werks, lgort),
-
-    CONSTRAINT mard_matnr_fk FOREIGN KEY (matnr)
-        REFERENCES mara (matnr),
-
-    CONSTRAINT mard_werks_fk FOREIGN KEY (werks)
-        REFERENCES t001w (werks)
+    labst NUMERIC(13,3) NOT NULL         -- Valuated unrestricted-use stock
 );
 
 -- MBEW – Material Valuation Data.
@@ -103,16 +119,7 @@ CREATE TABLE mbew (
     matnr VARCHAR(40)   NOT NULL,        -- Material number
     bwkey VARCHAR(4)    NOT NULL,        -- Valuation area (we map it to plant)
     stprs NUMERIC(11,2) NOT NULL,        -- Standard price
-    peinh NUMERIC(5,0)  NOT NULL,        -- Price unit
-
-    CONSTRAINT mbew_pkey PRIMARY KEY (matnr, bwkey),
-
-    CONSTRAINT mbew_matnr_fk FOREIGN KEY (matnr)
-        REFERENCES mara (matnr),
-
-    -- In our simplified schema BWKEY == WERKS
-    CONSTRAINT mbew_bwkey_fk FOREIGN KEY (bwkey)
-        REFERENCES t001w (werks)
+    peinh NUMERIC(5,0)  NOT NULL         -- Price unit
 );
 
 -- LFA1 – Vendor Master (General Data).
@@ -130,13 +137,7 @@ CREATE TABLE ekko (
     bukrs VARCHAR(4)  NOT NULL,     -- Company code
     lifnr VARCHAR(10) NOT NULL,     -- Vendor
     bedat DATE        NOT NULL,     -- Purchasing document date
-    waers VARCHAR(5)  NOT NULL,     -- Currency key
-
-    CONSTRAINT ekko_bukrs_fk FOREIGN KEY (bukrs)
-        REFERENCES t001 (bukrs),
-
-    CONSTRAINT ekko_lifnr_fk FOREIGN KEY (lifnr)
-        REFERENCES lfa1 (lifnr)
+    waers VARCHAR(5)  NOT NULL      -- Currency key
 );
 
 -- EKPO – Purchasing Document Item.
@@ -150,18 +151,7 @@ CREATE TABLE ekpo (
     meins VARCHAR(3)   NOT NULL,        -- Order unit
     netpr NUMERIC(11,2) NOT NULL,       -- Net price (per price unit)
     peinh NUMERIC(5,0)  NOT NULL,       -- Price unit
-    netwr NUMERIC(15,2) NOT NULL,       -- Net item value
-
-    CONSTRAINT ekpo_pkey PRIMARY KEY (ebeln, ebelp),
-
-    CONSTRAINT ekpo_ekko_fk FOREIGN KEY (ebeln)
-        REFERENCES ekko (ebeln),
-
-    CONSTRAINT ekpo_matnr_fk FOREIGN KEY (matnr)
-        REFERENCES mara (matnr),
-
-    CONSTRAINT ekpo_werks_fk FOREIGN KEY (werks)
-        REFERENCES t001w (werks)
+    netwr NUMERIC(15,2) NOT NULL        -- Net item value
 );
 
 -- EKBE – Purchasing Document History.
@@ -175,12 +165,7 @@ CREATE TABLE ekbe (
     buzei INTEGER      NOT NULL,        -- Item in follow-on document
     budat DATE         NOT NULL,        -- Posting date
     menge NUMERIC(13,3) NOT NULL,       -- Quantity
-    dmbtr NUMERIC(15,2) NOT NULL,       -- Amount in local currency
-
-    CONSTRAINT ekbe_pkey PRIMARY KEY (ebeln, ebelp, vgabe, gjahr, belnr, buzei),
-
-    CONSTRAINT ekbe_ekpo_fk FOREIGN KEY (ebeln, ebelp)
-        REFERENCES ekpo (ebeln, ebelp)
+    dmbtr NUMERIC(15,2) NOT NULL        -- Amount in local currency
 );
 
 -- MKPF – Material Document Header.
@@ -188,9 +173,7 @@ CREATE TABLE ekbe (
 CREATE TABLE mkpf (
     mblnr VARCHAR(10) NOT NULL,  -- Material document number
     mjahr INTEGER     NOT NULL,  -- Material document year
-    budat DATE        NOT NULL,  -- Posting date
-
-    CONSTRAINT mkpf_pkey PRIMARY KEY (mblnr, mjahr)
+    budat DATE        NOT NULL   -- Posting date
 );
 
 -- MSEG – Material Document Item.
@@ -199,26 +182,15 @@ CREATE TABLE mseg (
     mblnr VARCHAR(10)  NOT NULL,        -- Material document number
     mjahr INTEGER      NOT NULL,        -- Material document year
     zeile INTEGER      NOT NULL,        -- Item in material document
-
     matnr VARCHAR(40)  NOT NULL,        -- Material
     werks VARCHAR(4)   NOT NULL,        -- Plant
     lgort VARCHAR(4)   NOT NULL,        -- Storage location
+    kostl VARCHAR(10)  NOT NULL,        -- Cost center
     bwart VARCHAR(3)   NOT NULL,        -- Movement type
     menge NUMERIC(13,3) NOT NULL,       -- Quantity
     meins VARCHAR(3)   NOT NULL,        -- Unit of measure
     dmbtr NUMERIC(15,2) NOT NULL,       -- Amount in local currency
-    waers VARCHAR(5)   NOT NULL,        -- Currency
-
-    CONSTRAINT mseg_pkey PRIMARY KEY (mblnr, mjahr, zeile),
-
-    CONSTRAINT mseg_mkpf_fk FOREIGN KEY (mblnr, mjahr)
-        REFERENCES mkpf (mblnr, mjahr),
-
-    CONSTRAINT mseg_matnr_fk FOREIGN KEY (matnr)
-        REFERENCES mara (matnr),
-
-    CONSTRAINT mseg_werks_fk FOREIGN KEY (werks)
-        REFERENCES t001w (werks)
+    waers VARCHAR(5)   NOT NULL         -- Currency
 );
 
 -- RBKP – Invoice Document Header.
@@ -230,15 +202,7 @@ CREATE TABLE rbkp (
     lifnr VARCHAR(10) NOT NULL,   -- Vendor
     bldat DATE        NOT NULL,   -- Invoice document date
     budat DATE        NOT NULL,   -- Posting date
-    waers VARCHAR(5)  NOT NULL,   -- Currency
-
-    CONSTRAINT rbkp_pkey PRIMARY KEY (belnr, gjahr),
-
-    CONSTRAINT rbkp_bukrs_fk FOREIGN KEY (bukrs)
-        REFERENCES t001 (bukrs),
-
-    CONSTRAINT rbkp_lifnr_fk FOREIGN KEY (lifnr)
-        REFERENCES lfa1 (lifnr)
+    waers VARCHAR(5)  NOT NULL    -- Currency
 );
 
 -- RSEG – Invoice Document Item.
@@ -247,27 +211,10 @@ CREATE TABLE rseg (
     belnr VARCHAR(10)  NOT NULL,        -- Invoice document number
     gjahr INTEGER      NOT NULL,        -- Fiscal year
     buzei INTEGER      NOT NULL,        -- Invoice line item
-
     ebeln VARCHAR(10)  NOT NULL,        -- PO number
     ebelp INTEGER      NOT NULL,        -- PO item
     matnr VARCHAR(40)  NOT NULL,        -- Material
-
     menge NUMERIC(13,3) NOT NULL,       -- Invoiced quantity
     meins VARCHAR(3)    NOT NULL,       -- Unit of measure
-    wrbtr NUMERIC(15,2) NOT NULL,       -- Amount in document currency
-
-    CONSTRAINT rseg_pkey PRIMARY KEY (belnr, gjahr, buzei),
-
-    CONSTRAINT rseg_rbkp_fk FOREIGN KEY (belnr, gjahr)
-        REFERENCES rbkp (belnr, gjahr),
-
-    CONSTRAINT rseg_ekpo_fk FOREIGN KEY (ebeln, ebelp)
-        REFERENCES ekpo (ebeln, ebelp),
-
-    CONSTRAINT rseg_matnr_fk FOREIGN KEY (matnr)
-        REFERENCES mara (matnr)
+    wrbtr NUMERIC(15,2) NOT NULL        -- Amount in document currency
 );
-
-
-
-

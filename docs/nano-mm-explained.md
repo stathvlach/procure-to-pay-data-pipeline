@@ -11,7 +11,8 @@ the table mirrors SAP’s standard customizing table T001, reinforcing the disti
 configuration and transactional procurement data. The company code is therefore not merely a label but a key modeling 
 artifact that governs how procurement processes interact with finance and compliance in an enterprise system.
 
-### Cryptic Name: Why “T001”?
+### Cryptic Name:
+
 In SAP naming conventions, tables beginning with **T** typically denote *customizing* or configuration objects rather 
 than transactional data. The number **001** reflects its role as one of the earliest and most fundamental organizational 
 configuration tables in the Financial Accounting (FI) module. Although used throughout Materials Management, the name 
@@ -50,7 +51,8 @@ counterpart, the table plays a central role in determining where materials resid
 forming an essential foundation for downstream tables such as MARD (storage-location-level stock) and MBEW (valuation). 
 Without plant-level structure, no meaningful logistics or procurement modeling can occur.
 
-### Cryptic Name: Why “T001W”?
+### Cryptic Name:
+
 The prefix **T** indicates a customizing or configuration table. Just like T001 stores company code configuration, 
 **T001W** extends the organizational definition by assigning plant-level entities. The suffix **W** originates from the 
 German word *Werk* (plant or factory), which SAP traditionally abbreviates with the letter **W** when naming structures 
@@ -81,7 +83,7 @@ country, vendor distribution by region, or cross-company procurement patterns gr
 country master data from transactional tables, `T005` reinforces a clean distinction between reference data and
 operational records, which is a best practice in data modeling and data warehousing.
 
-### Cryptic Name: Why “T005”?
+### Cryptic Name:
 
 As with other SAP customizing tables, the prefix **T** indicates configuration or reference data rather than
 transactional records. The numeric part **005** was assigned early in the Financial Accounting domain for
@@ -110,7 +112,7 @@ to support realistic scenarios like ordering in one unit and valuating in anothe
 From an analytics perspective, `T006` provides a clean dimension for grouping and interpreting quantities, making
 numerical data easier to understand and compare across documents and processes.
 
-### Cryptic Name: Why “T006”?
+### Cryptic Name:
 
 The table name **T006** follows the SAP convention where **T** denotes a customizing or configuration table. The number
 **006** was historically assigned to units-of-measure configuration. Over time, “T006” became the canonical table for
@@ -126,6 +128,65 @@ referenced by material master data and quantity-bearing transactional tables.
   A human-readable description of the unit of measure, such as “Each”, “Kilogram”, or “Meter”. Used in reports and UIs
 to make unit codes understandable to business users.
 
+## T134 – Material Types
+
+The `T134` table defines material types, which classify materials according to their functional and logistical role
+within the nano-mm model. Material types determine whether a material is stock-managed, purchased, produced, or treated
+as a service, and therefore influence downstream processes such as valuation, consumption, and inventory tracking. In
+the simplified version of T134 used here, each material type is represented by a short alphanumeric code and a
+descriptive text. The table acts as reference data that enriches the material master (MARA), providing a consistent
+taxonomy for categorizing materials across procurement, stock movements, and invoice verification scenarios. This
+structure allows the analytics layer to segment spend, stock, and operational flows by meaningful business
+categories—such as raw materials, finished goods, packaging, or non-stock services. By externalizing material type
+definitions into a dedicated reference table, the schema enforces cleaner data modeling, ensures standardization, and
+aligns with best practices found in SAP MM implementations.
+
+### Cryptic Name:
+
+As with other SAP customizing tables, the prefix **T** indicates configuration or reference data rather than
+transactional records. The number **134** has historically been associated with material type definitions in SAP’s
+Materials Management module. Over time, “T134” became the canonical lookup table for material types used in the MARA
+material master.
+
+### Field Explanations
+
+- **MTART** (***MAT**erial**ART** → Material Type)
+  The primary key of the table. Identifies the material type, such as raw materials, finished goods, or services. Used
+by MARA to classify materials for procurement and inventory logic.
+
+- **MTBEZ** (***M**aterial**T**yp**BEZ**eichnung → Material Type Description)
+  A human-readable description of the material type. Used in reporting and analytics to make material categories
+understandable to business users.
+
+## T023 – Material Groups
+
+The `T023` table defines material groups, a key classification structure for organizing materials by shared
+characteristics or procurement patterns. Unlike material types, which describe the functional class of a material,
+material groups provide a business-oriented segmentation that supports spend analysis, supplier management, and
+reporting. They allow organizations to cluster materials such as electrical components, office supplies, packaging
+materials, consumables, or spare parts under coherent categories. In the nano-mm model, `T023` acts as reference data
+for the MARA material master, enforcing consistency and enabling analytics that depend on grouping materials beyond
+their individual identifiers. This table is intentionally lightweight, containing only a group key and a description,
+mirroring simplified SAP MM customizing while remaining highly effective for ETL and warehouse modeling. By
+externalizing material groups into a dedicated reference table, the schema supports controlled categorization and
+improves clarity in procurement, logistics, and financial insights.
+
+### Cryptic Name:
+
+The prefix **T** indicates a customizing or reference table in SAP. The numeric identifier **023** has historically been
+assigned to the material group catalog in SAP MM. As a stable artifact across releases, “T023” is widely recognized as
+the source of material groups for the MARA master data.
+
+### Field Explanations
+
+- **MATKL** (***MAT**erial**KL**asse → Material Group)
+  The material group key, representing a business-driven classification of materials. Used to cluster materials with
+similar procurement behavior or characteristics.
+
+- **WGBEZ** (***W**aren**G**ruppe**BEZ**eichnung → Material Group Description)
+  A human-readable label describing the material group. Serves as the primary text for reporting, analytics, and
+selection criteria.
+
 ## T156 – Movement Types
 
 The `T156` table defines movement types, which classify how stock moves within the system. Movement types determine the
@@ -138,7 +199,7 @@ interpreted analytically. For this project, `T156` enables realistic categorizat
 analyses such as receipts versus issues, reversal patterns, and stock transfer behavior. It also provides a clear entry
 point for extending the model with more detailed movement logic in the future.
 
-### Cryptic Name: Why “T156”?
+### Cryptic Name:
 
 The prefix **T** again indicates a customizing or configuration table. The number **156** was allocated within Materials
 Management to represent movement-type control and has remained stable across SAP releases. “T156” is therefore
@@ -154,6 +215,39 @@ It is the primary key of the table and is referenced from MSEG.
   A textual description of the movement type. Makes the meaning of BWART codes understandable in reports and user
 interfaces, e.g., “Goods receipt for purchase order”.
 
+## CSKS – Cost Center Master Data
+
+The `CSKS` table defines cost centers, which represent responsibility centers for costs within the nano-mm model. A cost
+center typically corresponds to an organizational unit such as a department, team, or functional area where expenses are
+collected and analyzed. In this simplified design, each cost center is identified globally and assigned to a company
+code, reflecting which legal entity owns the costs. While the procurement and logistics tables focus on physical flows
+of materials and documents, CSKS introduces a management-accounting perspective by providing structures that later
+documents can charge or allocate costs to. In real SAP CO, cost centers play a central role in budgeting, internal
+reporting, and performance measurement. Within this project, `CSKS` lays the groundwork for linking operational activity
+to analytical cost structures, enabling scenarios such as spend by cost center, department-level consumption analysis,
+and alignment between finance, controlling, and procurement views of the data.
+
+### Cryptic Name:
+
+The name “CSKS” originates from SAP’s Controlling (CO) module and has historically been used for the primary cost center
+master data table. It distinguishes cost center master records from purely financial accounts and from separate text
+tables, while keeping a stable identifier across SAP releases.
+
+### Field Explanations
+
+- **KOSTL** (***KOST**en**ST**e**L**le → Cost Center)
+  The unique identifier of the cost center. Represents an internal responsibility area where costs are collected and
+monitored.
+
+- **BUKRS** (***BU**chungs**KR**eis → Company Code)
+  The company code to which the cost center belongs. This simplified model assigns cost centers directly to legal
+entities instead of using a separate controlling area.
+
+- **KTEXT** (***K**urz**TEXT** → Short Text)
+  The short descriptive name of the cost center. Provides a readable label for reports and user interfaces, making cost
+center codes understandable to business users.
+
+
 ## MARA – General Material Master Data
 
 The `MARA` table forms the central definition of a material within the nano-mm model. It stores attributes that are 
@@ -167,7 +261,8 @@ MARA ensures that materials remain consistent entities regardless of operational
 across plants, vendors, and purchasing documents. Its structure mirrors the SAP standard design, focusing on global, 
 non-organizational attributes.
 
-### Cryptic Name: Why “MARA”?
+### Cryptic Name:
+
 SAP uses the prefix **MA** to denote *Material*–related tables. The suffix **RA** originates from early R/2-era internal 
 naming conventions, where different two-letter endings distinguished material master segments. Although historically 
 inherited, “MARA” consistently refers to the general (cross-plant) material attributes and is one of the most widely 
@@ -205,7 +300,8 @@ per location. In this project, `MARD` allows the simulation of multi-plant inven
 localized stock behavior. It provides the granularity required for analytics such as stock aging, storage utilization, 
 and plant-to-plant supply flows. Without MARD, no realistic procurement or logistics modeling could take place.
 
-### Cryptic Name: Why “MARD”?
+### Cryptic Name:
+
 The prefix **MA** identifies material-related tables. The suffix **RD** originates from legacy R/2 naming conventions, 
 where different two-letter endings were used to differentiate storage-location-level data from plant-level (e.g., MARD 
 vs. MARC). Although historically inherited, “MARD” consistently refers to material master data maintained at *plant + 
@@ -243,7 +339,8 @@ pricing, margin analysis, and simulated cost changes. MBEW provides the financia
 procurement operations with accounting principles and enables realistic analytics related to cost structures and 
 material profitability.
 
-### Cryptic Name: Why “MBEW”?
+### Cryptic Name:
+
 The prefix **MB** refers to *Material Bewirtschaftung* (material management/valuation) in SAP’s legacy terminology. The 
 suffix **EW** comes from *EinWertung* (valuation). Combined, “MBEW” has historically denoted the material valuation 
 segment of the material master, distinguishing it from general attributes (MARA) and storage data (MARD).
@@ -252,20 +349,20 @@ segment of the material master, distinguishing it from general attributes (MARA)
 
 - **MATNR** (***MAT**erial **NR**.* → Material Number)  
   Identifies the material for which valuation data is maintained. Links directly to MARA and ensures that valuation 
-logic applies consistently across processes.
+  logic applies consistently across processes.
 
 - **BWKEY** (***B**e**w**ertungs**key** → Valuation Area)  
   Represents the valuation area, mapped to the plant level in this project. It determines where valuation data is valid 
-and enables plant-specific cost structures. BWKEY is central to inventory valuation, cost calculations, and financial 
-postings.
+  and enables plant-specific cost structures. BWKEY is central to inventory valuation, cost calculations, and financial
+  postings.
 
 - **STPRS** (***ST**andard**PR**ei**S** → Standard Price)  
   The standard price of the material for the valuation area. Used in standard-costing environments to determine 
-inventory value, cost of goods sold, and material variances.
+  inventory value, cost of goods sold, and material variances.
 
 - **PEINH** (***P**reis**einh**eit → Price Unit)  
   Defines the quantity unit to which the standard price refers (e.g., price per 1, 10, or 100 units). This ensures 
-consistent price calculations and controls how valuation scales across material quantities.
+  consistent price calculations and controls how valuation scales across material quantities.
 
 ## LFA1 – Vendor Master (General Data)
 
@@ -280,7 +377,8 @@ country. This supports key processes like purchase order creation, invoice proce
 that all downstream documents can consistently reference the same vendor entity regardless of the organizational 
 context.
 
-### Cryptic Name: Why “LFA1”?
+### Cryptic Name:
+
 The prefix **LF** comes from the German word *Lieferant* (vendor or supplier). The suffix **A1** was historically 
 assigned to the general-data segment of the vendor master during SAP R/2 and early R/3 design. As a result, “LFA1” 
 consistently refers to the global, cross-company-code portion of vendor information.
@@ -289,15 +387,15 @@ consistently refers to the global, cross-company-code portion of vendor informat
 
 - **LIFNR** (***LIF**eranten**NR**.* → Vendor Number)  
   The unique identifier of the vendor. Used across procurement and financial processes to reference the supplier 
-consistently in purchase orders, goods receipts, and invoices.
+  consistently in purchase orders, goods receipts, and invoices.
 
 - **NAME1** (**Name** → Vendor Name)  
   The primary descriptive name of the vendor. Provides a human-readable label used in documents, UIs, and analytics. 
-This field is informational and not used for control logic.
+  This field is informational and not used for control logic.
 
 - **LAND1** (***LAND** → Country)  
   Specifies the vendor’s country. This attribute influences tax determination, import/export classification, and 
-compliance checks, making it relevant to both procurement and financial processing.
+  compliance checks, making it relevant to both procurement and financial processing.
 
 ## EKKO – Purchasing Document Header
 
@@ -311,7 +409,8 @@ modeling of procurement lifecycles by capturing supplier relationships, financia
 patterns of purchasing activity. It also supports analytics such as spend classification, vendor performance tracking, 
 and multi-company procurement behavior. Without EKKO, no coherent purchasing document structure could be represented.
 
-### Cryptic Name: Why “EKKO”?
+### Cryptic Name:
+
 The prefix **EK** derives from the German term *Einkauf* (purchasing). SAP uses **EK** consistently across all 
 purchasing document tables. The suffix **KO** originates from *KOpf* (header) in German. Thus, “EKKO” literally means 
 “Purchasing Header,” distinguishing it from EKPO, the purchasing document item table.
@@ -324,19 +423,19 @@ purchasing document tables. The suffix **KO** originates from *KOpf* (header) in
 
 - **BUKRS** (***BU**chungs**K**rei**S** → Company Code)  
   Specifies the legal entity responsible for the purchase. Determines financial ownership, currency defaults, and 
-downstream accounting behavior.
+  downstream accounting behavior.
 
 - **LIFNR** (***LIF**eranten**NR**.* → Vendor Number)  
   Identifies the supplier from whom the goods or services are ordered. Links directly to LFA1 and is essential for 
-vendor-specific reporting and invoice matching.
+  vendor-specific reporting and invoice matching.
 
 - **BEDAT** (***B**Estehungs**DAT**um → Purchasing Document Date)  
   The creation date of the purchase order. Used for spend analysis, reporting, period closing, and chronological 
-tracking of procurement activity.
+  tracking of procurement activity.
 
 - **WAERS** (***W**äh**r**ung**S** → Currency)  
   Defines the currency of the purchase order. Governs valuation of items and directly impacts invoice verification and 
-financial postings.
+  financial postings.
 
 ## EKPO – Purchasing Document Item
 
@@ -350,7 +449,8 @@ analysis, vendor performance evaluation, and material-level purchasing patterns.
 realistic modeling of multi-line purchase orders, plant-specific sourcing, and pricing structures, serving as a key 
 bridge between master data tables and downstream logistics and financial flows.
 
-### Cryptic Name: Why “EKPO”?
+### Cryptic Name:
+
 The prefix **EK** comes from the German word *Einkauf* (purchasing), used consistently for purchasing-related tables. 
 The suffix **PO** originates from *POsition* (item or line). Together, “EKPO” means “Purchasing Document Item,” 
 distinguishing it from EKKO, which stores the corresponding header data.
@@ -359,39 +459,39 @@ distinguishing it from EKKO, which stores the corresponding header data.
 
 - **EBELN** (***E**inkaufs**BEL**eg**N**ummer → Purchasing Document Number)  
   Identifies the purchase order to which the item belongs. It links each line item back to its header in EKKO and is 
-essential for grouping items into a single purchasing document.
+  essential for grouping items into a single purchasing document.
 
 - **EBELP** (***E**inkaufs**BEL**eg**P**osition → Item Number)  
   The sequential item number within a purchase order. It uniquely distinguishes one line item from another under the 
-same purchasing document.
+  same purchasing document.
 
 - **MATNR** (***MAT**erial **NR**.* → Material Number)  
   Specifies which material is being ordered on this item. It connects the line to the material master and enables 
-material-level purchasing and inventory analysis.
+  material-level purchasing and inventory analysis.
 
 - **WERKS** (***WERK** → Plant)  
   Indicates the plant for which the material is being procured. It determines where stock will be received and how 
-valuation and logistics rules apply.
+  valuation and logistics rules apply.
 
 - **MENGE** (***MENGE** → Quantity)  
   The ordered quantity for this line item. It drives requirements for goods receipt, inventory updates, and subsequent 
-invoice quantities.
+  invoice quantities.
 
 - **MEINS** (***ME**ngen**EIN**heißt → Order Unit)  
   The unit of measure in which the ordered quantity is expressed (e.g., EA, KG, M). It defines how quantities are 
-interpreted operationally.
+  interpreted operationally.
 
 - **NETPR** (***NET**to**PR**eis → Net Price)  
   The net price for the item per price unit, excluding taxes and certain surcharges. It is a key input to valuation and 
-invoice verification.
+  invoice verification.
 
 - **PEINH** (***P**reis**EINH**eit → Price Unit)  
   Defines the quantity basis for the net price (e.g., price per 1, 10, or 100 units). It controls how the net price 
-scales with the ordered quantity.
+  scales with the ordered quantity.
 
 - **NETWR** (***NET**to**W**e**R**t → Net Item Value)  
   The total net value of the line item, derived from quantity, net price, and price unit. It is central to spend 
-analysis and financial postings.
+  analysis and financial postings.
 
 ## EKBE – Purchasing Document History
 
@@ -405,7 +505,7 @@ realistic scenarios for three-way matching, partial deliveries, and delayed invo
 transactional backbone for analytics like GR/IR reconciliation, lead time measurement, and tracking the life cycle of a 
 purchase order item from creation to final settlement.
 
-### Cryptic Name: Why “EKBE”?
+### Cryptic Name:
 
 The prefix **EK** is derived from the German word *Einkauf* (purchasing) and is used consistently for purchasing 
 document tables. The suffix **BE** comes from *BEleg* (document). Together, “EKBE” refers to purchasing document history 
@@ -431,23 +531,23 @@ auditability.
 
 - **BELNR** (***BEL**eg**NR**.* → Document Number)  
   The number of the follow-on document (e.g., material document or accounting document). It links EKBE to the subsequent 
-process layer in inventory or finance.
+  process layer in inventory or finance.
 
 - **BUZEI** – Item in Follow-on Document  
   Identifies the line item within the follow-on document. Used together with BELNR to uniquely reference a specific 
-posting line.
+  posting line.
 
 - **BUDAT** (***BU**chungs**DAT**um → Posting Date)  
   The posting date of the follow-on document. It is essential for period determination, reporting, and understanding 
-when events actually affected stock and value.
+  when events actually affected stock and value.
 
 - **MENGE** (***MENGE** → Quantity)  
   The quantity associated with the history event (e.g., received or invoiced quantity). It is used to reconcile ordered, 
-delivered, and invoiced amounts at item level.
+  delivered, and invoiced amounts at item level.
 
 - **DMBTR** – Amount in Local Currency  
   The monetary amount of the history record in local currency. It supports financial reconciliation, GR/IR analysis, and 
-cost tracking for each event.
+  cost tracking for each event.
 
 ## MKPF – Material Document Header
 
@@ -461,7 +561,7 @@ chronological tracking of stock movements, supports reconciliation between purch
 for inventory reporting. In this project, `MKPF` allows the simulation of physical stock operations and anchors the 
 event-driven flow that connects procurement execution with inventory updates.
 
-### Cryptic Name: Why “MKPF”?
+### Cryptic Name:
 
 The prefix **MK** originates from *MaterialKopf*, where *Kopf* means “header” in German. SAP uses **M** consistently for 
 material-movement documents. The suffix **PF** is inherited from older SAP R/2 internal naming conventions that 
@@ -494,7 +594,7 @@ and valuation by carrying both quantities and amounts in local currency. In anal
 stock movements over time, movement-type distributions, and the impact of logistics events on inventory value. Without 
 MSEG, inventory behavior would remain purely theoretical and disconnected from real process execution.
 
-### Cryptic Name: Why “MSEG”?
+### Cryptic Name:
 
 The name “MSEG” combines **M** for material-related documents with **SEG**, short for *Segment*. In SAP terminology, 
 MSEG has historically denoted the item or segment portion of a material document, as opposed to MKPF, which stores the 
@@ -517,9 +617,12 @@ document number.
 - **MATNR** (***MAT**erial **NR**.* → Material Number)  
   Identifies the material affected by the movement. Links the logistics event back to the material master.
 
+- **KOSTL** is used for consumption postings (e.g., movement type 201) to link material issues to cost centers in CSKS
+  for management accounting and spend analysis.
+
 - **WERKS** (***WERK** → Plant)  
   Specifies the plant in which the movement occurs. Determines organizational and logistical context for the stock 
-change.
+  change.
 
 - **LGORT** (***L**ager**ORT** → Storage Location)  
   Defines the storage location within the plant that is impacted. Provides sub-plant granularity for inventory 
@@ -534,14 +637,14 @@ interpreted in inventory and accounting.
 
 - **MEINS** (***ME**ss**EIN**heit → Unit of Measure)  
   The unit of measure in which the movement quantity is expressed (e.g., EA, KG, M). Ensures consistent interpretation 
-of quantities.
+  of quantities.
 
 - **DMBTR** – Amount in Local Currency  
   The monetary value of the movement in local currency. Supports valuation-related reporting and reconciliation.
 
 - **WAERS** (***W**ä**r**ung**S** → Currency)  
   The currency key for the amount in this line item. Ensures correct monetary interpretation and alignment with 
-financial postings.
+  financial postings.
 
 ## RBKP – Invoice Document Header
 
@@ -556,7 +659,7 @@ performance evaluation, GR/IR reconciliation, and period-end processes. Within t
 simulation of invoice flows and bridges procurement operations with financial accounting through a structured document 
 lifecycle.
 
-### Cryptic Name: Why “RBKP”?
+### Cryptic Name:
 
 The prefix **RB** comes from the German term *RechnungsBeleg* (invoice document). The suffix **KP** derives from *Kopf* 
 (header). Together, “RBKP” denotes the header portion of an invoice document in the LIV process, analogous to how MKPF 
@@ -574,7 +677,7 @@ reconciliation.
 
 - **BUKRS** (***BU**chungs**KR**eis → Company Code)  
   Indicates the legal entity responsible for processing and posting the invoice. Determines accounting rules and 
-currency defaults.
+  currency defaults.
 
 - **LIFNR** (***LIF**eranten**NR**.* → Vendor Number)  
   Identifies the supplier who issued the invoice. Links directly to LFA1 and is central for vendor-level analytics.
@@ -601,7 +704,7 @@ creation of accounting postings. In analytics, it supports vendor performance tr
 procurement–finance alignment. Without RSEG, invoice processing would lack the detail needed for compliant and auditable 
 procurement operations.
 
-### Cryptic Name: Why “RSEG”?
+### Cryptic Name:
 
 The prefix **RS** originates from *RechnungsSegment*, meaning “invoice segment” or “invoice line.” The suffix **EG** is 
 derived from older SAP R/2 naming conventions to denote item-level detail. Together, “RSEG” identifies the table that 

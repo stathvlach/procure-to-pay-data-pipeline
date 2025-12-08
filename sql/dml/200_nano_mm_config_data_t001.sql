@@ -1,0 +1,26 @@
+-- =====================================================================
+-- Project : nano-mm
+-- File    : 20_nano_mm_config_data_t001.sql
+-- Purpose : Insert configuration data for table T001 (Company Codes).
+--
+-- Description:
+--   This script loads the static company code master data used across
+--   the nano-mm schema. Company codes represent legal entities that own
+--   procurement documents, inventory postings, and financial records.
+--
+--   The data in this file is stable reference configuration and forms
+--   the organizational backbone for downstream processes such as
+--   purchase order creation, goods movements, and invoice verification.
+--
+-- Notes:
+--   - Must be executed after table creation and constraint scripts.
+--   - Designed to be safely re-runnable during container initialization.
+--
+-- Execution context:
+--   Automatically executed by Postgres via /docker-entrypoint-initdb.d
+--   during database setup.
+--
+-- Author  : Stathis Vlachos
+-- =====================================================================
+
+INSERT INTO t001 (bukrs, butxt, land1, waers) VALUES ('1000', 'Nano-MM Demo Company', 'GR', 'EUR');

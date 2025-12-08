@@ -1,5 +1,5 @@
 -- =====================================================================
--- Project : nano-mm-oltp
+-- Project : nano-mm
 -- File    : 00_nano_mm_create_schema.sql
 -- Purpose : Create the nano_mm schema used to store all OLTP core tables
 --           for the SAP MM–inspired Procure-to-Pay data model.

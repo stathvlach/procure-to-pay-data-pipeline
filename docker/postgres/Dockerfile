@@ -14,4 +14,5 @@ VOLUME ["/data"]
 
 # Init SQL scripts
 COPY sql/ddl/*.sql   /docker-entrypoint-initdb.d/
+COPY sql/dml/*.sql   /docker-entrypoint-initdb.d/
 
