@@ -37,51 +37,46 @@ CREATE SEQUENCE mara_matnr_seq START 1;
 WITH params AS (
     SELECT 1000::int AS total_materials
 ),
-
 -- Material types config table T134
 t134_types AS (
     SELECT
         mtart,
         ROW_NUMBER() OVER (ORDER BY mtart) AS rn,
-        COUNT(*)  OVER ()                  AS cnt
+        COUNT(*)  OVER () AS cnt
     FROM (
         SELECT DISTINCT mtart
         FROM t134
     ) AS x
 ),
-
 -- Μmaterial group config table T023
 mat_groups AS (
     SELECT
         matkl,
         ROW_NUMBER() OVER (ORDER BY matkl) AS rn,
-        COUNT(*)  OVER ()                  AS cnt
+        COUNT(*)  OVER () AS cnt
     FROM (
         SELECT DISTINCT matkl
         FROM t023
     ) AS x
 ),
-
 -- UoM config table T006
 uom AS (
     SELECT
         meins,
         ROW_NUMBER() OVER (ORDER BY meins) AS rn,
-        COUNT(*)  OVER ()                  AS cnt
+        COUNT(*)  OVER () AS cnt
     FROM (
         SELECT DISTINCT meins
         FROM t006
     ) AS x
 ),
-
 materials AS (
     SELECT
-        ROW_NUMBER() OVER ()                                   AS rn,
-        lpad(nextval('mara_matnr_seq')::text, 8, '0')          AS matnr
+        ROW_NUMBER() OVER () AS rn,
+        lpad(nextval('mara_matnr_seq')::text, 8, '0') AS matnr
     FROM params p
     CROSS JOIN generate_series(1, p.total_materials) AS g
 ),
-
 materials_with_types AS (
     SELECT
         m.rn,

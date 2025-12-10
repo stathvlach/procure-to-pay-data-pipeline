@@ -1,5 +1,5 @@
 --================================================================================================
--- Script: 300_nano_mm_synthetic_data_lfa1.sql
+-- Script: 300_nano_mm_synthetic_data_LFA1.sql
 -- Purpose:
 --     Generate synthetic vendor master data (table: LFA1) using weighted country distributions.
 --
@@ -52,7 +52,7 @@ other_countries AS (
     SELECT
         land1,
         ROW_NUMBER() OVER (ORDER BY land1) AS rn,
-        COUNT(*) OVER ()                  AS cnt
+        COUNT(*) OVER () AS cnt
     FROM (
         SELECT DISTINCT land1
         FROM t005
@@ -69,7 +69,7 @@ FROM (
     -- GR: ~40%
     SELECT
         lpad(nextval('lfa1_lifnr_seq')::text, 10, '0') AS lifnr,
-        'GR'::varchar(3)                                AS land1
+        'GR'::varchar(3) AS land1
     FROM counts c
     CROSS JOIN generate_series(1, c.n_gr) AS g
 
@@ -78,7 +78,7 @@ FROM (
     -- DE: ~20%
     SELECT
         lpad(nextval('lfa1_lifnr_seq')::text, 10, '0') AS lifnr,
-        'DE'::varchar(3)                                AS land1
+        'DE'::varchar(3) AS land1
     FROM counts c
     CROSS JOIN generate_series(1, c.n_de) AS g
 
@@ -87,7 +87,7 @@ FROM (
     -- IT: ~10%
     SELECT
         lpad(nextval('lfa1_lifnr_seq')::text, 10, '0') AS lifnr,
-        'IT'::varchar(3)                                AS land1
+        'IT'::varchar(3) AS land1
     FROM counts c
     CROSS JOIN generate_series(1, c.n_it) AS g
 
@@ -96,7 +96,7 @@ FROM (
     -- Other countries: ~30%
     SELECT
         lpad(nextval('lfa1_lifnr_seq')::text, 10, '0') AS lifnr,
-        oc.land1                                       AS land1
+        oc.land1 AS land1
     FROM counts c
     JOIN generate_series(1, c.n_oth) AS g(i)
       ON TRUE
