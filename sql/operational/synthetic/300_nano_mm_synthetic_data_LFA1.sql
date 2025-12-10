@@ -1,5 +1,5 @@
 --================================================================================================
--- Script: generate_lfa1_vendors.sql
+-- Script: 300_nano_mm_synthetic_data_lfa1.sql
 -- Purpose:
 --     Generate synthetic vendor master data (table: LFA1) using weighted country distributions.
 --
@@ -7,24 +7,20 @@
 --     - Truncates and reinitializes the vendor table (LFA1) and its sequence.
 --     - Produces a fixed number of synthetic vendor records (~500 by default).
 --     - Assigns countries according to controlled distribution weights:
---         • GR: ~40%
---         • DE: ~20%
---         • IT: ~10%
---         • Other countries (from table T005): ~30% distributed evenly via modulo pattern.
---
---     - Uses window functions and generate_series to create reproducible, evenly spread
---       assignments across the distinct country list in T005.
+--         * GR: ~40%
+--         * DE: ~20%
+--         * IT: ~10%
+--         * Other countries (from table T005): ~30% distributed evenly via modulo pattern.
 --
 -- Dependencies:
---     • Table T005 must contain valid country codes including at least GR, DE, and IT.
---     • Sequence: lfa1_lifnr_seq (recreated in this script).
+--     * Table T005 must contain valid country codes including at least GR, DE, and IT.
+--     * Sequence: lfa1_lifnr_seq (recreated in this script).
 --
 -- Output:
 --     - Populates table LFA1 with synthetic but realistically distributed vendor master data.
 --
 -- Notes:
 --     - Adjust the total_vendors parameter in the CTE "params" as needed.
---     - CASCADE is used on TRUNCATE to ensure safe cleanup of dependent tables if referenced.
 --================================================================================================
 
 TRUNCATE TABLE lfa1 CASCADE;
