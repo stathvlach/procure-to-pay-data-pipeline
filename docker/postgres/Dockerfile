@@ -13,6 +13,8 @@ RUN mkdir -p /data/landing \
 VOLUME ["/data"]
 
 # Init SQL scripts
-COPY sql/ddl/*.sql   /docker-entrypoint-initdb.d/
-COPY sql/dml/*.sql   /docker-entrypoint-initdb.d/
+COPY sql/operational/init/*.sql /docker-entrypoint-initdb.d/
+COPY sql/operational/config/*.sql /docker-entrypoint-initdb.d/
+COPY sql/operational/synthetic/*.sql /docker-entrypoint-initdb.d/
 
+COPY sql/bootstrap/init/*.sql /docker-entrypoint-initdb.d/

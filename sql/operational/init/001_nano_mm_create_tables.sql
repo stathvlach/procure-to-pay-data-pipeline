@@ -1,5 +1,5 @@
 -- =====================================================================
--- Project : nano-mm
+-- Project : Procure-to-Pay Data Platform
 -- File    : 01_nano_mm_create_tables.sql
 -- Purpose : Create all core tables in the nano_mm schema
 --           (master data + transactional structures).
@@ -29,12 +29,10 @@
 -- Author  : Stathis Vlachos
 -- =====================================================================
 
-SET search_path TO nano_mm;
-
 -- T001 – Company Codes (SAP standard customizing table).
 -- Represents independent legal accounting entities that structure all procurement,
 -- valuation, and financial integration in the nano-mm schema.
-CREATE TABLE t001 (
+CREATE TABLE operational.t001 (
     bukrs VARCHAR(4)  PRIMARY KEY,  -- Company code
     butxt VARCHAR(50) NOT NULL,     -- Company code name
     land1 VARCHAR(3)  NOT NULL,     -- Country key
@@ -43,7 +41,7 @@ CREATE TABLE t001 (
 
 -- T001W – Plants (organizational units representing physical or logical locations).
 -- Stores plant master data used for procurement, inventory management, and valuation layers.
-CREATE TABLE t001w (
+CREATE TABLE operational.t001w (
     werks VARCHAR(4)  PRIMARY KEY,  -- Plant
     name1 VARCHAR(30) NOT NULL,     -- Plant name
     land1 VARCHAR(3)  NOT NULL      -- Country key
@@ -51,14 +49,14 @@ CREATE TABLE t001w (
 
 -- T005 – Country Keys.
 -- Stores country codes and names used by company codes, plants, and vendors.
-CREATE TABLE t005 (
+CREATE TABLE operational.t005 (
     land1 VARCHAR(3) PRIMARY KEY,   -- Country key
     landx VARCHAR(50) NOT NULL      -- Country name
 );
 
 -- T006 – Units of Measure.
 -- Stores unit-of-measure codes and their descriptions used for materials and quantities.
-CREATE TABLE t006 (
+CREATE TABLE operational.t006 (
     meins VARCHAR(3) PRIMARY KEY,    -- Unit of measure
     mseh3 VARCHAR(15) NOT NULL,      -- UoM text (short description)
     mtext VARCHAR(50) NOT NULL       -- UoM text (long description)
@@ -67,7 +65,7 @@ CREATE TABLE t006 (
 -- T023 – Material Groups.
 -- Stores material group codes and their descriptive texts used to
 -- categorize materials in the MARA master data table.
-CREATE TABLE t023 (
+CREATE TABLE operational.t023 (
     matkl VARCHAR(9)  PRIMARY KEY,   -- Material group
     wgbez VARCHAR(40) NOT NULL       -- Material group description
 );
@@ -75,21 +73,21 @@ CREATE TABLE t023 (
 -- T134 – Material Types.
 -- Stores material type codes and their descriptions used to classify
 -- materials in the MARA master data table.
-CREATE TABLE t134 (
+CREATE TABLE operational.t134 (
     mtart VARCHAR(4) PRIMARY KEY,   -- Material type
     mtbez VARCHAR(40) NOT NULL      -- Material type description
 );
 
 -- T156 – Movement Types.
 -- Stores movement type definitions used to classify material and stock movements.
-CREATE TABLE t156 (
+CREATE TABLE operational.t156 (
     bwart VARCHAR(3) PRIMARY KEY,     -- Movement type
     btext VARCHAR(60) NOT NULL        -- Movement type description
 );
 
 -- CSKS – Cost Center Master Data.
 -- Stores cost center identifiers, their company code assignment, and descriptive names.
-CREATE TABLE csks (
+CREATE TABLE operational.csks (
     kostl VARCHAR(10) PRIMARY KEY,  -- Cost center
     bukrs VARCHAR(4)  NOT NULL,     -- Company code
     ktext VARCHAR(40) NOT NULL      -- Cost center name (short text)
@@ -97,7 +95,7 @@ CREATE TABLE csks (
 
 -- MARA – General Material Master Data.
 -- Stores cross-plant material attributes forming the core identification layer for all materials.
-CREATE TABLE mara (
+CREATE TABLE operational.mara (
     matnr VARCHAR(40) PRIMARY KEY,  -- Material number
     mtart VARCHAR(4)  NOT NULL,     -- Material type
     matkl VARCHAR(9)  NOT NULL,     -- Material group
@@ -106,7 +104,7 @@ CREATE TABLE mara (
 
 -- MARD – Storage Location Material Data.
 -- Stores plant- and storage-location-level inventory attributes, including unrestricted-use stock.
-CREATE TABLE mard (
+CREATE TABLE operational.mard (
     matnr VARCHAR(40)  NOT NULL,         -- Material number
     werks VARCHAR(4)   NOT NULL,         -- Plant
     lgort VARCHAR(4)   NOT NULL,         -- Storage location
@@ -115,7 +113,7 @@ CREATE TABLE mard (
 
 -- MBEW – Material Valuation Data.
 -- Stores valuation metrics per material and valuation area, including standard price and price unit.
-CREATE TABLE mbew (
+CREATE TABLE operational.mbew (
     matnr VARCHAR(40)   NOT NULL,        -- Material number
     bwkey VARCHAR(4)    NOT NULL,        -- Valuation area (we map it to plant)
     stprs NUMERIC(11,2) NOT NULL,        -- Standard price
@@ -124,7 +122,7 @@ CREATE TABLE mbew (
 
 -- LFA1 – Vendor Master (General Data).
 -- Stores global vendor attributes such as vendor ID, name, and country, independent of company code.
-CREATE TABLE lfa1 (
+CREATE TABLE operational.lfa1 (
     lifnr VARCHAR(10) PRIMARY KEY,  -- Vendor ID / account number
     name1 VARCHAR(35) NOT NULL,     -- Vendor name
     land1 VARCHAR(3)  NOT NULL      -- Country key
@@ -132,7 +130,7 @@ CREATE TABLE lfa1 (
 
 -- EKKO – Purchasing Document Header.
 -- Stores header-level information for purchase orders, such as vendor, company code, date, and currency.
-CREATE TABLE ekko (
+CREATE TABLE operational.ekko (
     ebeln VARCHAR(10) PRIMARY KEY,  -- Purchasing document number
     bukrs VARCHAR(4)  NOT NULL,     -- Company code
     lifnr VARCHAR(10) NOT NULL,     -- Vendor
@@ -142,7 +140,7 @@ CREATE TABLE ekko (
 
 -- EKPO – Purchasing Document Item.
 -- Stores item-level details for purchase orders, including material, plant, quantity, and pricing.
-CREATE TABLE ekpo (
+CREATE TABLE operational.ekpo (
     ebeln VARCHAR(10)  NOT NULL,        -- PO number
     ebelp INTEGER      NOT NULL,        -- PO item number
     matnr VARCHAR(40)  NOT NULL,        -- Material
@@ -156,7 +154,7 @@ CREATE TABLE ekpo (
 
 -- EKBE – Purchasing Document History.
 -- Stores history records for purchase order items, including GR/IR events, quantities, and amounts.
-CREATE TABLE ekbe (
+CREATE TABLE operational.ekbe (
     ebeln VARCHAR(10)  NOT NULL,        -- PO number
     ebelp INTEGER      NOT NULL,        -- PO item
     vgabe CHAR(1)      NOT NULL,        -- Event type (1=GR,2=IR,...)
@@ -170,7 +168,7 @@ CREATE TABLE ekbe (
 
 -- MKPF – Material Document Header.
 -- Stores header-level information for material documents such as document number, year, and posting date.
-CREATE TABLE mkpf (
+CREATE TABLE operational.mkpf (
     mblnr VARCHAR(10) NOT NULL,  -- Material document number
     mjahr INTEGER     NOT NULL,  -- Material document year
     budat DATE        NOT NULL   -- Posting date
@@ -178,7 +176,7 @@ CREATE TABLE mkpf (
 
 -- MSEG – Material Document Item.
 -- Stores item-level lines of material documents, including movement type, quantity, value, and stock location.
-CREATE TABLE mseg (
+CREATE TABLE operational.mseg (
     mblnr VARCHAR(10)  NOT NULL,        -- Material document number
     mjahr INTEGER      NOT NULL,        -- Material document year
     zeile INTEGER      NOT NULL,        -- Item in material document
@@ -195,7 +193,7 @@ CREATE TABLE mseg (
 
 -- RBKP – Invoice Document Header.
 -- Stores header-level information for vendor invoices, including document number, vendor, dates, and currency.
-CREATE TABLE rbkp (
+CREATE TABLE operational.rbkp (
     belnr VARCHAR(10) NOT NULL,   -- Invoice document number
     gjahr INTEGER     NOT NULL,   -- Fiscal year
     bukrs VARCHAR(4)  NOT NULL,   -- Company code
@@ -207,7 +205,7 @@ CREATE TABLE rbkp (
 
 -- RSEG – Invoice Document Item.
 -- Stores item-level invoice data, linking PO items to invoiced quantities and amounts.
-CREATE TABLE rseg (
+CREATE TABLE operational.rseg (
     belnr VARCHAR(10)  NOT NULL,        -- Invoice document number
     gjahr INTEGER      NOT NULL,        -- Fiscal year
     buzei INTEGER      NOT NULL,        -- Invoice line item

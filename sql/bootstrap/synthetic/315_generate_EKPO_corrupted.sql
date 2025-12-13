@@ -1,0 +1,55 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : bootstrap
+-- Folder  : synthetic
+-- File    : 315_generate_EKPO_corrupted.sql
+--
+-- Purpose:
+--   Generate corrupted purchase order items (EKPO) data by applying
+--   controlled data-quality issues to an otherwise clean baseline.
+--
+-- Description:
+--   This script produces a corrupted variant of the synthetic EKPO dataset
+--   to simulate real-world external source system issues (e.g., missing
+--   values, invalid codes, inconsistent dates, duplicates).
+--
+--   The corruption behavior is driven by declarative rule metadata stored
+--   in the bootstrap configuration tables. Rules are applied specifically
+--   for the EKPO entity according to:
+--     - Enabled rule configurations and intensity settings
+--     - Rule parameterization (e.g., targeted columns, ranges, offsets)
+--
+--   The expected pattern is:
+--     1) Generate or reference the clean EKPO baseline dataset, then
+--     2) Apply configured corruption rules, and
+--     3) Persist the corrupted dataset for export as landing files.
+--
+-- Inputs:
+--   - Clean baseline dataset produced by:
+--       - 310_generate_EKKO_clean.sql
+--   - Corruption rule catalog and configuration:
+--       - corruption_rule
+--       - table_corruption_config
+--       - corruption_rule_param
+--
+-- Outputs:
+--   Corrupted synthetic EKPO dataset, persisted temporarily within the
+--   bootstrap schema and/or exported as landing files.
+--
+-- Execution Context:
+--   Executed as part of the bootstrap synthetic data generation workflow,
+--   after the corresponding clean EKPO generation step.
+--
+-- Notes:
+--   - Corrupted outputs are intentionally not guaranteed to satisfy
+--     completeness, formatting, or domain validity constraints.
+--   - The resulting dataset is intended for downstream staging ingestion
+--     and data quality handling (bronze/silver).
+--
+-- Author: Stathis Vlachos
+-- =====================================================================
+
+
+--
+-- STATUS:
+--   PLACEHOLDER

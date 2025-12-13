@@ -1,0 +1,49 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : staging
+-- Folder  : silver
+-- File    : 400_silver_transform_EKKO.sql
+--
+-- Purpose :
+--   Transform raw bronze purchase order header (EKKO) data into a cleaned,
+--   standardized silver representation suitable for operational loading.
+--
+-- Description:
+--   This script refines purchase order header data from the staging bronze
+--   table into the staging silver table. The silver layer represents the
+--   cleaned and standardized stage of the medallion architecture.
+--
+--   Typical transformations performed at this stage include:
+--     - Type normalization and safe casting (dates, numerics, codes)
+--     - Canonical formatting (trimming, casing, standard date formats)
+--     - Basic field-level validation (required fields, value ranges)
+--     - Deduplication using stable business keys (where applicable)
+--     - Standardization of null handling and default values
+--
+--   No cross-table referential integrity constraints are enforced in the
+--   staging layer. Relational consistency is enforced later when loading
+--   into the operational schema.
+--
+-- Inputs :
+--   staging.bronze_ekko
+--
+-- Outputs:
+--   staging.silver_ekko
+--
+-- Execution Context:
+--   Executed by the staging refinement DAG after successful bronze ingestion.
+--   Typically runs after 300_bronze_load_EKKO.sql has completed.
+--
+-- Notes :
+--   - Records that fail validation may be filtered out, corrected, or routed
+--     to a rejects/quarantine mechanism depending on pipeline design.
+--   - Keep silver deterministic and repeatable to support reproducibility
+--     and testing.
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+
+
+--
+-- STATUS:
+--   PLACEHOLDER

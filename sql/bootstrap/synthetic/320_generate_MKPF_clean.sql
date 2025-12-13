@@ -1,0 +1,50 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : bootstrap
+-- Folder  : synthetic
+-- File    : 320_generate_MKPF_clean.sql
+--
+-- Purpose:
+--   Generate clean material document header (MKPF) data representing
+--   valid, well-formed external source system output.
+--
+-- Description:
+--   This script generates a synthetic but semantically valid dataset
+--   for materials header (MKPF). The generated data represents
+--   the expected output of an external procurement system under normal
+--   operating conditions, without data quality issues or corruption.
+--
+--   The dataset produced here serves as the "clean" baseline used to:
+--     - Export landing files (CSV / JSON / XML), and
+--     - Act as input for controlled corruption scenarios defined
+--       in subsequent bootstrap scripts.
+--
+--   No corruption rules are applied in this script. All records comply
+--   with expected structural and business-level constraints.
+--
+-- Inputs:
+--   Reference and master data from the operational schema, including:
+--     - Company codes
+--     - Vendors
+--     - Purchasing organizations and document types
+--
+-- Outputs:
+--   Clean synthetic MKPF dataset, persisted temporarily within the
+--   bootstrap schema and/or exported as landing files.
+--
+-- Execution Context:
+--   Executed as part of the bootstrap synthetic data generation workflow.
+--   Typically run prior to the corresponding corrupted data generator.
+--
+-- Notes:
+--   This script intentionally does not enforce relational constraints
+--   to downstream documents (EKPO, MSEG, RSEG). Such relationships are
+--   resolved later in the data pipeline.
+--
+-- Author: Stathis Vlachos
+-- =====================================================================
+
+
+--
+-- STATUS:
+--   PLACEHOLDER

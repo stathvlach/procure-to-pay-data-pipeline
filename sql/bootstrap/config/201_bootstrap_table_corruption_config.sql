@@ -1,0 +1,49 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : bootstrap
+-- Folder  : config
+-- File    : 201_bootstrap_table_corruption_config.sql
+--
+-- Purpose:
+--   Configure which corruption rules apply to each transactional table and
+--   define the corruption intensity and activation status per rule.
+--
+-- Description:
+--   This script seeds table-level corruption configurations that specify
+--   how corruption rules from the bootstrap rule catalog are applied to
+--   specific transactional entities:
+--     - EKKO / EKPO (Purchase Orders)
+--     - MKPF / MSEG (Goods Movements)
+--     - RBKP / RSEG (Invoices)
+--
+--   Each configuration entry maps:
+--     - A target table (entity)
+--     - A rule_code (from bootstrap.corruption_rule)
+--     - An intensity value (e.g., percentage of affected rows/fields)
+--     - An enabled flag (to activate/deactivate the rule)
+--
+--   Rule parameterization (e.g., targeted columns, ranges, offsets) is
+--   defined separately in the rule-parameter script.
+--
+-- Inputs:
+--   - Rule catalog seeded by 200_bootstrap_corruption_rules.sql
+--   - Configuration tables created by 001_bootstrap_create_tables.sql
+--
+-- Outputs:
+--   Seed data inserted into:
+--     - bootstrap.table_corruption_config
+--
+-- Execution Context:
+--   Executed during environment setup / re-seeding of the bootstrap layer.
+--   Typically run after the corruption rule catalog has been populated.
+--
+-- Notes :
+--   - This script should be idempotent to support repeated development runs
+--     (e.g., INSERT...ON CONFLICT DO NOTHING, or TRUNCATE+INSERT in dev).
+--   - Intensity semantics should be consistent across rules (e.g., 0.05 = 5%).
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+--
+-- STATUS:
+--   PLACEHOLDER

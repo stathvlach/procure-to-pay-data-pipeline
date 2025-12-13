@@ -1,0 +1,41 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : analytics
+-- Folder  : init
+-- File    : 000_analytics_create_schema.sql
+--
+-- Purpose :
+--   Create the analytics schema used as the enterprise reporting and
+--   dimensional modeling layer for the Procure-to-Pay domain.
+--
+-- Description:
+--   This script initializes the analytics database schema, which serves as
+--   the consumption layer for BI and reporting workloads. The analytics
+--   layer is expected to host curated dimensional models (e.g., star schema)
+--   and derived metrics built from operational system-of-record data.
+--
+--   No tables, constraints, or seed data are defined in this script.
+--   All dimensional/fact table definitions and seeds are provided in
+--   subsequent analytics initialization and configuration scripts.
+--
+-- Inputs :
+--   None.
+--
+-- Outputs:
+--   Database schema: analytics
+--
+-- Execution Context:
+--   Executed during database initialization as part of platform scaffolding.
+--   The script is idempotent and safe to re-run.
+--
+-- Notes :
+--   The analytics schema is intentionally isolated from staging and
+--   operational schemas to separate reporting workloads from transactional
+--   processing and to enable independent evolution of the BI model.
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+
+
+-- STATUS:
+--   PLACEHOLDER

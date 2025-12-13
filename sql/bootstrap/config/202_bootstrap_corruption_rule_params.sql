@@ -1,0 +1,49 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : bootstrap
+-- Folder  : config
+-- File    : 202_bootstrap_corruption_rule_params.sql
+--
+-- Purpose:
+--   Seed parameter values for table-level corruption configurations to
+--   control how each corruption rule is applied during data generation.
+--
+-- Description:
+--   This script populates corruption rule parameters that further specify
+--   the behavior of corruption rules configured per table. Parameters are
+--   attached to entries in bootstrap.table_corruption_config and may define:
+--     - Targeted columns (e.g., which fields to nullify or perturb)
+--     - Valid/invalid value ranges (e.g., outlier min/max)
+--     - Date offsets or formatting variants
+--     - Duplicate key strategies
+--     - Any rule-specific options required by generator logic
+--
+--   The intent is to keep corruption behavior declarative and adjustable
+--   without changing SQL generator scripts or DAG logic.
+--
+-- Inputs:
+--   - Table-level rule configuration seeded by 201_bootstrap_table_corruption_config.sql
+--   - Parameter table created by 001_bootstrap_create_tables.sql
+--
+-- Outputs:
+--   Seed data inserted into:
+--     - bootstrap.corruption_rule_param
+--
+-- Execution Context:
+--   Executed during environment setup / re-seeding of the bootstrap layer.
+--   Typically run after table-level corruption configuration has been seeded.
+--
+-- Notes :
+--   - This script should be idempotent to support repeated development runs.
+--   - Parameter values are typically stored as text and interpreted by the
+--     generator logic (SQL or DAG code) at runtime.
+--   - Keep parameter naming consistent (e.g., "columns", "min", "max",
+--     "days_offset", "null_rate") to avoid brittle parsing logic.
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+
+
+--
+-- STATUS:
+--   PLACEHOLDER

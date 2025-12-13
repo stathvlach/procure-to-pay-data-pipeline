@@ -1,0 +1,48 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : analytics
+-- Folder  : init
+-- File    : 001_analytics_create_tables.sql
+--
+-- Purpose :
+--   Create the core analytics tables required for dimensional modeling and
+--   reporting over the Procure-to-Pay domain.
+--
+-- Description:
+--   This script defines the physical tables of the analytics schema,
+--   typically following a dimensional modeling approach (e.g., star schema).
+--   The analytics layer is designed for read-heavy workloads, aggregations,
+--   and BI consumption, and is populated from the operational system-of-record.
+--
+--   Tables created here may include:
+--     - Dimension tables (e.g., vendors, materials, plants, cost centers, dates)
+--     - Fact tables (e.g., purchase orders, goods receipts, invoices)
+--     - Supporting bridge or helper tables where necessary
+--
+--   This script contains only DDL for table creation. Constraints, indexes,
+--   seeds, and load/refresh logic are defined in subsequent scripts.
+--
+-- Inputs :
+--   None.
+--
+-- Outputs:
+--   Analytics tables (dimensions and facts) created under schema: analytics
+--
+-- Execution Context:
+--   Executed during database initialization after the analytics schema has
+--   been created. Intended to be re-runnable in development environments.
+--   (Exact idempotency depends on DDL strategy used in this script.)
+--
+-- Notes :
+--   - Keep analytics tables optimized for query workloads (e.g., surrogate keys,
+--     denormalization where appropriate).
+--   - Loading/refresh logic should be implemented as separate scripts or DAG
+--     tasks to keep DDL and DML responsibilities separated.
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+
+
+--
+-- STATUS:
+--   PLACEHOLDER

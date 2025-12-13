@@ -1,5 +1,5 @@
 -- =====================================================================
--- Project : nano-mm
+-- Project : Procure-to-Pay Data Platform
 -- File    : 02_nano_mm_create_constraints.sql
 -- Purpose : Define all primary keys, foreign keys, and relational
 --           integrity rules for the nano_mm OLTP schema.
@@ -32,45 +32,45 @@
 -- Author  : Stathis Vlachos
 -- =====================================================================
 
-ALTER TABLE mara
+ALTER TABLE operational.mara
     ADD CONSTRAINT mara_mtart_fk FOREIGN KEY (mtart) REFERENCES t134 (mtart),
     ADD CONSTRAINT mara_matkl_fk FOREIGN KEY (matkl) REFERENCES t023 (matkl);
 ;
 
-ALTER TABLE mard
+ALTER TABLE operational.mard
     ADD CONSTRAINT mard_pkey PRIMARY KEY (matnr, werks, lgort),
     ADD CONSTRAINT mard_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
     ADD CONSTRAINT mard_werks_fk FOREIGN KEY (werks) REFERENCES t001w (werks)
 ;
 
-ALTER TABLE mbew
+ALTER TABLE operational.mbew
     ADD CONSTRAINT mbew_pkey PRIMARY KEY (matnr, bwkey),
     ADD CONSTRAINT mbew_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
     ADD CONSTRAINT mbew_bwkey_fk FOREIGN KEY (bwkey) REFERENCES t001w (werks) --  simplified schema BWKEY == WERKS
 ;
 
-ALTER TABLE ekko
+ALTER TABLE operational.ekko
     ADD CONSTRAINT ekko_bukrs_fk FOREIGN KEY (bukrs) REFERENCES t001 (bukrs),
     ADD CONSTRAINT ekko_lifnr_fk FOREIGN KEY (lifnr) REFERENCES lfa1 (lifnr)
 ;
 
-ALTER TABLE ekpo
+ALTER TABLE operational.ekpo
     ADD CONSTRAINT ekpo_pkey PRIMARY KEY (ebeln, ebelp),
     ADD CONSTRAINT ekpo_ekko_fk FOREIGN KEY (ebeln) REFERENCES ekko (ebeln),
     ADD CONSTRAINT ekpo_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
     ADD CONSTRAINT ekpo_werks_fk FOREIGN KEY (werks) REFERENCES t001w (werks)
 ;
 
-ALTER TABLE ekbe
+ALTER TABLE operational.ekbe
     ADD CONSTRAINT ekbe_pkey PRIMARY KEY (ebeln, ebelp, vgabe, gjahr, belnr, buzei),
     ADD CONSTRAINT ekbe_ekpo_fk FOREIGN KEY (ebeln, ebelp) REFERENCES ekpo (ebeln, ebelp)
 ;
 
-ALTER TABLE mkpf
+ALTER TABLE operational.mkpf
     ADD CONSTRAINT mkpf_pkey PRIMARY KEY (mblnr, mjahr)
 ;
 
-ALTER TABLE mseg
+ALTER TABLE operational.mseg
     ADD CONSTRAINT mseg_pkey PRIMARY KEY (mblnr, mjahr, zeile),
     ADD CONSTRAINT mseg_mkpf_fk FOREIGN KEY (mblnr, mjahr) REFERENCES mkpf (mblnr, mjahr),
     ADD CONSTRAINT mseg_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
@@ -78,13 +78,13 @@ ALTER TABLE mseg
     ADD CONSTRAINT mseg_kostl_fk FOREIGN KEY (kostl) REFERENCES csks (kostl)
 ;
 
-ALTER TABLE rbkp
+ALTER TABLE operational.rbkp
     ADD CONSTRAINT rbkp_pkey PRIMARY KEY (belnr, gjahr),
     ADD CONSTRAINT rbkp_bukrs_fk FOREIGN KEY (bukrs) REFERENCES t001 (bukrs),
     ADD CONSTRAINT rbkp_lifnr_fk FOREIGN KEY (lifnr) REFERENCES lfa1 (lifnr)
 ;
 
-ALTER TABLE rseg
+ALTER TABLE operational.rseg
     ADD CONSTRAINT rseg_pkey PRIMARY KEY (belnr, gjahr, buzei),
     ADD CONSTRAINT rseg_rbkp_fk FOREIGN KEY (belnr, gjahr) REFERENCES rbkp (belnr, gjahr),
     ADD CONSTRAINT rseg_ekpo_fk FOREIGN KEY (ebeln, ebelp) REFERENCES ekpo (ebeln, ebelp),

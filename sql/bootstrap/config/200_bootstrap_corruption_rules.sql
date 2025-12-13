@@ -1,0 +1,43 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : bootstrap
+-- Folder  : config
+-- File    : 200_bootstrap_corruption_rules.sql
+--
+-- Purpose:
+--   Seed the bootstrap corruption rule catalog used to describe supported
+--   data-quality corruption patterns for synthetic data generation.
+--
+-- Description:
+--   This script populates the bootstrap-level rule catalog, defining the
+--   available corruption rule types that may be applied to transactional
+--   datasets (EKKO, EKPO, MKPF, MSEG, RBKP, RSEG).
+--
+--   The rule catalog is a stable reference list (rule definitions), while
+--   rule application (per table, intensity, and parameters) is configured
+--   separately via table-specific configuration scripts.
+--
+-- Inputs:
+--   None.
+--
+-- Outputs:
+--   Seed data inserted into:
+--     - bootstrap.corruption_rule
+--
+-- Execution Context:
+--   Executed during environment setup / re-seeding of the bootstrap layer.
+--   Typically run after bootstrap tables have been created.
+--
+-- Notes :
+--   - The catalog is intended to be relatively static; new rules may be
+--     added incrementally as new corruption scenarios are introduced.
+--   - This script should be idempotent (e.g., INSERT...ON CONFLICT DO NOTHING)
+--     to support repeated development runs.
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+
+
+--
+-- STATUS:
+--   PLACEHOLDER

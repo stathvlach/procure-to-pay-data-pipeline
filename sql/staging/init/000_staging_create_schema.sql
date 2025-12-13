@@ -1,0 +1,41 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : staging
+-- Folder  : init
+-- File    : 000_staging_create_schema.sql
+--
+-- Purpose :
+--   Create the staging schema used to ingest, refine, and prepare external
+--   procurement data using a medallion-style (bronze/silver) approach.
+--
+-- Description:
+--   This script initializes the staging database schema, which serves as the
+--   internal landing and refinement layer of the data platform.
+--
+--   The staging schema contains:
+--     - Bronze tables for raw data ingestion from landing files
+--     - Silver tables for cleaned, standardized, and validated data
+--
+--   No business relationships or referential constraints are enforced at
+--   this layer. The staging schema focuses exclusively on data refinement
+--   and preparation prior to loading into the operational system of record.
+--
+-- Inputs :
+--   None.
+--
+-- Outputs:
+--   Database schema: staging
+--
+-- Execution Context:
+--   Executed during database initialization as part of platform scaffolding.
+--   The script is idempotent and safe to re-run.
+--
+-- Notes :
+--   The staging schema represents the Bronze and Silver layers of the
+--   medallion architecture and is intentionally isolated from bootstrap
+--   and operational schemas.
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+CREATE SCHEMA IF NOT EXISTS staging;
+

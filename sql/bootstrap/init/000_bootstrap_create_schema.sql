@@ -1,0 +1,38 @@
+-- =====================================================================
+-- Project : Procure-to-Pay Data Platform
+-- Layer   : bootstrap
+-- Folder  : init
+-- File    : 000_bootstrap_create_schema.sql
+--
+-- Purpose:
+--   Create the bootstrap schema used to simulate external source systems
+--   and generate landing files for transactional procurement data.
+--
+-- Description:
+--   This script initializes the bootstrap database schema, which represents
+--   the simulated external environment producing raw procurement data.
+--   The bootstrap layer is responsible for file generation (CSV, JSON, XML)
+--   and data corruption scenarios, but does not contain business or
+--   relational logic.
+--
+--   No tables, constraints, or seed data are defined in this script.
+--   All bootstrap tables are created in subsequent initialization scripts.
+--
+-- Inputs:
+--   None.
+--
+-- Outputs:
+--   Database schema: bootstrap
+--
+-- Execution Context:
+--   Executed during database initialization as part of the platform
+--   scaffolding process. The script is idempotent and safe to re-run.
+--
+-- Notes :
+--   The bootstrap schema is intentionally isolated from staging and
+--   operational schemas to preserve separation of concerns between
+--   external system simulation and internal data processing.
+--
+-- Author : Stathis Vlachos
+-- =====================================================================
+CREATE SCHEMA IF NOT EXISTS bootstrap;
