@@ -22,13 +22,13 @@
 -- =====================================================================
 
 -- Capex
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('C10001', '1000', 'New Equipment Investments');
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('C10002', '1000', 'IT Infrastructure Capex');
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('C10003', '1000', 'Plant Expansion Projects');
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('C10004', '1000', 'Facilities Modernization');
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('C10005', '1000', 'Machinery Replacement Capex');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('C10001', '1000', 'New Equipment Investments');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('C10002', '1000', 'IT Infrastructure Capex');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('C10003', '1000', 'Plant Expansion Projects');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('C10004', '1000', 'Facilities Modernization');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('C10005', '1000', 'Machinery Replacement Capex');
 -- Opex
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('O20001', '1000', 'Maintenance Operations');
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('O20002', '1000', 'Logistics Operations');
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('O20003', '1000', 'Administrative Expenses');
-INSERT INTO csks (kostl, bukrs, ktext) VALUES ('O20004', '1000', 'Quality Assurance Operations');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('O20001', '1000', 'Maintenance Operations');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('O20002', '1000', 'Logistics Operations');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('O20003', '1000', 'Administrative Expenses');
+INSERT INTO operational.csks (kostl, bukrs, ktext) VALUES ('O20004', '1000', 'Quality Assurance Operations');

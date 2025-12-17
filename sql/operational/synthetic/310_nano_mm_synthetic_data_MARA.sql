@@ -29,6 +29,9 @@
 -- Notes:
 --     - Adjust total_materials in the CTE "params" as needed.
 --================================================================================================
+
+SET search_path TO operational;
+
 TRUNCATE TABLE mara CASCADE;
 
 DROP SEQUENCE IF EXISTS mara_matnr_seq;

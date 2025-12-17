@@ -23,6 +23,8 @@
 --     - Adjust the total_vendors parameter in the CTE "params" as needed.
 --================================================================================================
 
+SET search_path TO operational;
+
 TRUNCATE TABLE lfa1 CASCADE;
 
 DROP SEQUENCE IF EXISTS lfa1_lifnr_seq;

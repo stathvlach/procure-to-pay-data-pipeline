@@ -32,38 +32,84 @@
 -- Author  : Stathis Vlachos
 -- =====================================================================
 
+ALTER TABLE operational.t001
+    ADD CONSTRAINT t001_pkey PRIMARY KEY (bukrs)
+;
+
+ALTER TABLE operational.t001w
+    ADD CONSTRAINT t001w_pkey PRIMARY KEY (werks)
+;
+
+ALTER TABLE operational.t001l
+    ADD CONSTRAINT t001l_pkey PRIMARY KEY (werks, lgort),
+    ADD CONSTRAINT t001l_werks_fk FOREIGN KEY (werks) REFERENCES operational.t001w (werks)
+;
+
+ALTER TABLE operational.t005
+    ADD CONSTRAINT t005_pkey PRIMARY KEY (land1)
+;
+
+ALTER TABLE operational.t006
+    ADD CONSTRAINT t006_pkey PRIMARY KEY (meins)
+;
+
+ALTER TABLE operational.t023
+    ADD CONSTRAINT t023_pkey PRIMARY KEY (matkl)
+;
+
+ALTER TABLE operational.t156
+    ADD CONSTRAINT t156_pkey PRIMARY KEY (bwart)
+;
+
+ALTER TABLE operational.t134
+    ADD CONSTRAINT t134_pkey PRIMARY KEY (mtart)
+;
+
+ALTER TABLE operational.csks
+    ADD CONSTRAINT csks_pkey PRIMARY KEY (kostl)
+;
+
 ALTER TABLE operational.mara
-    ADD CONSTRAINT mara_mtart_fk FOREIGN KEY (mtart) REFERENCES t134 (mtart),
-    ADD CONSTRAINT mara_matkl_fk FOREIGN KEY (matkl) REFERENCES t023 (matkl);
+    ADD CONSTRAINT mara_pkey PRIMARY KEY (matnr),
+    ADD CONSTRAINT mara_mtart_fk FOREIGN KEY (mtart) REFERENCES operational.t134 (mtart),
+    ADD CONSTRAINT mara_matkl_fk FOREIGN KEY (matkl) REFERENCES operational.t023 (matkl);
 ;
 
 ALTER TABLE operational.mard
     ADD CONSTRAINT mard_pkey PRIMARY KEY (matnr, werks, lgort),
-    ADD CONSTRAINT mard_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
-    ADD CONSTRAINT mard_werks_fk FOREIGN KEY (werks) REFERENCES t001w (werks)
+    ADD CONSTRAINT mard_matnr_fk FOREIGN KEY (matnr) REFERENCES operational.mara (matnr),
+    ADD CONSTRAINT mard_werks_fk FOREIGN KEY (werks) REFERENCES operational.t001w (werks),
+    ADD CONSTRAINT mard_werks_lgort_fk FOREIGN KEY (werks, lgort) REFERENCES operational.t001l (werks, lgort),
+    ADD CONSTRAINT mard_labst_non_negative CHECK (labst >= 0)
 ;
 
 ALTER TABLE operational.mbew
     ADD CONSTRAINT mbew_pkey PRIMARY KEY (matnr, bwkey),
-    ADD CONSTRAINT mbew_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
-    ADD CONSTRAINT mbew_bwkey_fk FOREIGN KEY (bwkey) REFERENCES t001w (werks) --  simplified schema BWKEY == WERKS
+    ADD CONSTRAINT mbew_matnr_fk FOREIGN KEY (matnr) REFERENCES operational.mara (matnr),
+    --  simplified schema BWKEY == WERKS
+    ADD CONSTRAINT mbew_bwkey_fk FOREIGN KEY (bwkey) REFERENCES operational.t001w (werks)
+;
+
+ALTER TABLE operational.lfa1
+    ADD CONSTRAINT lfa1_pkey PRIMARY KEY (lifnr)
 ;
 
 ALTER TABLE operational.ekko
-    ADD CONSTRAINT ekko_bukrs_fk FOREIGN KEY (bukrs) REFERENCES t001 (bukrs),
-    ADD CONSTRAINT ekko_lifnr_fk FOREIGN KEY (lifnr) REFERENCES lfa1 (lifnr)
+    ADD CONSTRAINT ekko_pkey PRIMARY KEY (ebeln),
+    ADD CONSTRAINT ekko_bukrs_fk FOREIGN KEY (bukrs) REFERENCES operational.t001 (bukrs),
+    ADD CONSTRAINT ekko_lifnr_fk FOREIGN KEY (lifnr) REFERENCES operational.lfa1 (lifnr)
 ;
 
 ALTER TABLE operational.ekpo
     ADD CONSTRAINT ekpo_pkey PRIMARY KEY (ebeln, ebelp),
-    ADD CONSTRAINT ekpo_ekko_fk FOREIGN KEY (ebeln) REFERENCES ekko (ebeln),
-    ADD CONSTRAINT ekpo_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
-    ADD CONSTRAINT ekpo_werks_fk FOREIGN KEY (werks) REFERENCES t001w (werks)
+    ADD CONSTRAINT ekpo_ekko_fk FOREIGN KEY (ebeln) REFERENCES operational.ekko (ebeln),
+    ADD CONSTRAINT ekpo_matnr_fk FOREIGN KEY (matnr) REFERENCES operational.mara (matnr),
+    ADD CONSTRAINT ekpo_werks_fk FOREIGN KEY (werks) REFERENCES operational.t001w (werks)
 ;
 
 ALTER TABLE operational.ekbe
     ADD CONSTRAINT ekbe_pkey PRIMARY KEY (ebeln, ebelp, vgabe, gjahr, belnr, buzei),
-    ADD CONSTRAINT ekbe_ekpo_fk FOREIGN KEY (ebeln, ebelp) REFERENCES ekpo (ebeln, ebelp)
+    ADD CONSTRAINT ekbe_ekpo_fk FOREIGN KEY (ebeln, ebelp) REFERENCES operational.ekpo (ebeln, ebelp)
 ;
 
 ALTER TABLE operational.mkpf
@@ -72,21 +118,21 @@ ALTER TABLE operational.mkpf
 
 ALTER TABLE operational.mseg
     ADD CONSTRAINT mseg_pkey PRIMARY KEY (mblnr, mjahr, zeile),
-    ADD CONSTRAINT mseg_mkpf_fk FOREIGN KEY (mblnr, mjahr) REFERENCES mkpf (mblnr, mjahr),
-    ADD CONSTRAINT mseg_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr),
-    ADD CONSTRAINT mseg_werks_fk FOREIGN KEY (werks) REFERENCES t001w (werks),
-    ADD CONSTRAINT mseg_kostl_fk FOREIGN KEY (kostl) REFERENCES csks (kostl)
+    ADD CONSTRAINT mseg_mkpf_fk FOREIGN KEY (mblnr, mjahr) REFERENCES operational.mkpf (mblnr, mjahr),
+    ADD CONSTRAINT mseg_matnr_fk FOREIGN KEY (matnr) REFERENCES operational.mara (matnr),
+    ADD CONSTRAINT mseg_werks_fk FOREIGN KEY (werks) REFERENCES operational.t001w (werks),
+    ADD CONSTRAINT mseg_kostl_fk FOREIGN KEY (kostl) REFERENCES operational.csks (kostl)
 ;
 
 ALTER TABLE operational.rbkp
     ADD CONSTRAINT rbkp_pkey PRIMARY KEY (belnr, gjahr),
-    ADD CONSTRAINT rbkp_bukrs_fk FOREIGN KEY (bukrs) REFERENCES t001 (bukrs),
-    ADD CONSTRAINT rbkp_lifnr_fk FOREIGN KEY (lifnr) REFERENCES lfa1 (lifnr)
+    ADD CONSTRAINT rbkp_bukrs_fk FOREIGN KEY (bukrs) REFERENCES operational.t001 (bukrs),
+    ADD CONSTRAINT rbkp_lifnr_fk FOREIGN KEY (lifnr) REFERENCES operational.lfa1 (lifnr)
 ;
 
 ALTER TABLE operational.rseg
     ADD CONSTRAINT rseg_pkey PRIMARY KEY (belnr, gjahr, buzei),
-    ADD CONSTRAINT rseg_rbkp_fk FOREIGN KEY (belnr, gjahr) REFERENCES rbkp (belnr, gjahr),
-    ADD CONSTRAINT rseg_ekpo_fk FOREIGN KEY (ebeln, ebelp) REFERENCES ekpo (ebeln, ebelp),
-    ADD CONSTRAINT rseg_matnr_fk FOREIGN KEY (matnr) REFERENCES mara (matnr)
+    ADD CONSTRAINT rseg_rbkp_fk FOREIGN KEY (belnr, gjahr) REFERENCES operational.rbkp (belnr, gjahr),
+    ADD CONSTRAINT rseg_ekpo_fk FOREIGN KEY (ebeln, ebelp) REFERENCES operational.ekpo (ebeln, ebelp),
+    ADD CONSTRAINT rseg_matnr_fk FOREIGN KEY (matnr) REFERENCES operational.mara (matnr)
 ;

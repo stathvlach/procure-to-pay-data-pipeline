@@ -33,7 +33,7 @@
 -- Represents independent legal accounting entities that structure all procurement,
 -- valuation, and financial integration in the nano-mm schema.
 CREATE TABLE operational.t001 (
-    bukrs VARCHAR(4)  PRIMARY KEY,  -- Company code
+    bukrs VARCHAR(4)  NOT NULL,  -- Company code
     butxt VARCHAR(50) NOT NULL,     -- Company code name
     land1 VARCHAR(3)  NOT NULL,     -- Country key
     waers VARCHAR(5)  NOT NULL      -- Company code currency
@@ -42,22 +42,30 @@ CREATE TABLE operational.t001 (
 -- T001W – Plants (organizational units representing physical or logical locations).
 -- Stores plant master data used for procurement, inventory management, and valuation layers.
 CREATE TABLE operational.t001w (
-    werks VARCHAR(4)  PRIMARY KEY,  -- Plant
+    werks VARCHAR(4)  NOT NULL,     -- Plant
     name1 VARCHAR(30) NOT NULL,     -- Plant name
     land1 VARCHAR(3)  NOT NULL      -- Country key
+);
+
+-- T001L – Storage Locations (subdivisions of plants used for inventory organization).
+-- Stores storage location master data per plant, defining where materials are physically
+-- or logically stored within a plant for inventory management and stock tracking.
+CREATE TABLE operational.t001l (
+    werks VARCHAR(4)  NOT NULL,     -- Plant
+    lgort VARCHAR(4)  NOT NULL      -- Storage Location
 );
 
 -- T005 – Country Keys.
 -- Stores country codes and names used by company codes, plants, and vendors.
 CREATE TABLE operational.t005 (
-    land1 VARCHAR(3) PRIMARY KEY,   -- Country key
+    land1 VARCHAR(3)  NOT NULL,     -- Country key
     landx VARCHAR(50) NOT NULL      -- Country name
 );
 
 -- T006 – Units of Measure.
 -- Stores unit-of-measure codes and their descriptions used for materials and quantities.
 CREATE TABLE operational.t006 (
-    meins VARCHAR(3) PRIMARY KEY,    -- Unit of measure
+    meins VARCHAR(3)  NOT NULL,    -- Unit of measure
     mseh3 VARCHAR(15) NOT NULL,      -- UoM text (short description)
     mtext VARCHAR(50) NOT NULL       -- UoM text (long description)
 );
@@ -66,7 +74,7 @@ CREATE TABLE operational.t006 (
 -- Stores material group codes and their descriptive texts used to
 -- categorize materials in the MARA master data table.
 CREATE TABLE operational.t023 (
-    matkl VARCHAR(9)  PRIMARY KEY,   -- Material group
+    matkl VARCHAR(9)  NOT NULL,      -- Material group
     wgbez VARCHAR(40) NOT NULL       -- Material group description
 );
 
@@ -74,21 +82,21 @@ CREATE TABLE operational.t023 (
 -- Stores material type codes and their descriptions used to classify
 -- materials in the MARA master data table.
 CREATE TABLE operational.t134 (
-    mtart VARCHAR(4) PRIMARY KEY,   -- Material type
+    mtart VARCHAR(4) NOT NULL,      -- Material type
     mtbez VARCHAR(40) NOT NULL      -- Material type description
 );
 
 -- T156 – Movement Types.
 -- Stores movement type definitions used to classify material and stock movements.
 CREATE TABLE operational.t156 (
-    bwart VARCHAR(3) PRIMARY KEY,     -- Movement type
+    bwart VARCHAR(3)  NOT NULL,       -- Movement type
     btext VARCHAR(60) NOT NULL        -- Movement type description
 );
 
 -- CSKS – Cost Center Master Data.
 -- Stores cost center identifiers, their company code assignment, and descriptive names.
 CREATE TABLE operational.csks (
-    kostl VARCHAR(10) PRIMARY KEY,  -- Cost center
+    kostl VARCHAR(10) NOT NULL,  -- Cost center
     bukrs VARCHAR(4)  NOT NULL,     -- Company code
     ktext VARCHAR(40) NOT NULL      -- Cost center name (short text)
 );
@@ -96,7 +104,7 @@ CREATE TABLE operational.csks (
 -- MARA – General Material Master Data.
 -- Stores cross-plant material attributes forming the core identification layer for all materials.
 CREATE TABLE operational.mara (
-    matnr VARCHAR(40) PRIMARY KEY,  -- Material number
+    matnr VARCHAR(40) NOT NULL,  -- Material number
     mtart VARCHAR(4)  NOT NULL,     -- Material type
     matkl VARCHAR(9)  NOT NULL,     -- Material group
     meins VARCHAR(3)  NOT NULL      -- Base unit of measure
@@ -123,7 +131,7 @@ CREATE TABLE operational.mbew (
 -- LFA1 – Vendor Master (General Data).
 -- Stores global vendor attributes such as vendor ID, name, and country, independent of company code.
 CREATE TABLE operational.lfa1 (
-    lifnr VARCHAR(10) PRIMARY KEY,  -- Vendor ID / account number
+    lifnr VARCHAR(10) NOT NULL,     -- Vendor ID / account number
     name1 VARCHAR(35) NOT NULL,     -- Vendor name
     land1 VARCHAR(3)  NOT NULL      -- Country key
 );
@@ -131,7 +139,7 @@ CREATE TABLE operational.lfa1 (
 -- EKKO – Purchasing Document Header.
 -- Stores header-level information for purchase orders, such as vendor, company code, date, and currency.
 CREATE TABLE operational.ekko (
-    ebeln VARCHAR(10) PRIMARY KEY,  -- Purchasing document number
+    ebeln VARCHAR(10) NOT NULL,  -- Purchasing document number
     bukrs VARCHAR(4)  NOT NULL,     -- Company code
     lifnr VARCHAR(10) NOT NULL,     -- Vendor
     bedat DATE        NOT NULL,     -- Purchasing document date

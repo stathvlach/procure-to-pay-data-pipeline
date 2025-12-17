@@ -21,18 +21,18 @@
 -- Author  : Stathis Vlachos
 -- =====================================================================
 
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('EA',  'Each', 'Each (individual unit)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('PCE', 'Piece', 'Piece (individual item)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('KG',  'Kilogram', 'Kilogram (kg)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('G',   'Gram', 'Gram (g)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('L',   'Liter', 'Liter (l)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('ML',  'Milliliter', 'Milliliter (ml)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('M',   'Meter', 'Meter (m)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('CM',  'Centimeter', 'Centimeter (cm)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('MM',  'Millimeter', 'Millimeter (mm)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('BOX', 'Box', 'Box (packaged set of units)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('PK',  'Pack', 'Pack (multiple units packaged)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('SET', 'Set', 'Set (collection of items)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('BAG', 'Bag', 'Bag (loose materials)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('PAL', 'Pallet', 'Pallet (logistics handling unit)');
-INSERT INTO t006 (meins, mseh3, mtext) VALUES ('ROL', 'Roll', 'Roll (material wound onto a core)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('EA',  'Each', 'Each (individual unit)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('PCE', 'Piece', 'Piece (individual item)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('KG',  'Kilogram', 'Kilogram (kg)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('G',   'Gram', 'Gram (g)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('L',   'Liter', 'Liter (l)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('ML',  'Milliliter', 'Milliliter (ml)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('M',   'Meter', 'Meter (m)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('CM',  'Centimeter', 'Centimeter (cm)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('MM',  'Millimeter', 'Millimeter (mm)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('BOX', 'Box', 'Box (packaged set of units)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('PK',  'Pack', 'Pack (multiple units packaged)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('SET', 'Set', 'Set (collection of items)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('BAG', 'Bag', 'Bag (loose materials)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('PAL', 'Pallet', 'Pallet (logistics handling unit)');
+INSERT INTO operational.t006 (meins, mseh3, mtext) VALUES ('ROL', 'Roll', 'Roll (material wound onto a core)');

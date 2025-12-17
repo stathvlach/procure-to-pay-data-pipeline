@@ -19,11 +19,11 @@
 -- Author  : Stathis Vlachos
 -- =====================================================================
 
-INSERT INTO t134 (mtart, mtbez) VALUES ('ROH', 'Raw Materials');
-INSERT INTO t134 (mtart, mtbez) VALUES ('HALB', 'Semi-Finished Products');
-INSERT INTO t134 (mtart, mtbez) VALUES ('FERT', 'Finished Products');
-INSERT INTO t134 (mtart, mtbez) VALUES ('VERP', 'Packaging Materials');
-INSERT INTO t134 (mtart, mtbez) VALUES ('HIBE', 'Operating Supplies');
-INSERT INTO t134 (mtart, mtbez) VALUES ('NLAG', 'Non-Stock Materials');
-INSERT INTO t134 (mtart, mtbez) VALUES ('SERV', 'Services');
-INSERT INTO t134 (mtart, mtbez) VALUES ('ZMAT', 'Custom Demo Material Type');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('ROH', 'Raw Materials');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('HALB', 'Semi-Finished Products');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('FERT', 'Finished Products');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('VERP', 'Packaging Materials');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('HIBE', 'Operating Supplies');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('NLAG', 'Non-Stock Materials');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('SERV', 'Services');
+INSERT INTO operational.t134 (mtart, mtbez) VALUES ('ZMAT', 'Custom Demo Material Type');

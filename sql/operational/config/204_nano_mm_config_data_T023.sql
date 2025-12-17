@@ -21,18 +21,18 @@
 -- Author  : Stathis Vlachos
 -- =====================================================================
 
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000001', 'Electrical Components');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000002', 'Mechanical Parts');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000003', 'Packaging Materials');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000004', 'Office Supplies');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000005', 'IT Equipment');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000006', 'Safety and PPE');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000007', 'Tools and Workshop Equipment');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000008', 'Chemical Consumables');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000009', 'Maintenance Spare Parts');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000010', 'Cleaning Supplies');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000011', 'Logistics Handling Units');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000012', 'Raw Material Categories');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000013', 'Finished Goods Categories');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000014', 'Service Procurement');
-INSERT INTO t023 (matkl, wgbez) VALUES ('100000015', 'Custom Demo Material Group');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000001', 'Electrical Components');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000002', 'Mechanical Parts');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000003', 'Packaging Materials');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000004', 'Office Supplies');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000005', 'IT Equipment');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000006', 'Safety and PPE');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000007', 'Tools and Workshop Equipment');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000008', 'Chemical Consumables');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000009', 'Maintenance Spare Parts');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000010', 'Cleaning Supplies');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000011', 'Logistics Handling Units');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000012', 'Raw Material Categories');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000013', 'Finished Goods Categories');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000014', 'Service Procurement');
+INSERT INTO operational.t023 (matkl, wgbez) VALUES ('100000015', 'Custom Demo Material Group');

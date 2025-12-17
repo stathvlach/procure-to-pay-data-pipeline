@@ -23,4 +23,4 @@
 -- Author  : Stathis Vlachos
 -- =====================================================================
 
-INSERT INTO t001 (bukrs, butxt, land1, waers) VALUES ('1000', 'Nano-MM Demo Company', 'GR', 'EUR');
+INSERT INTO operational.t001 (bukrs, butxt, land1, waers) VALUES ('1000', 'Nano-MM Demo Company', 'GR', 'EUR');
