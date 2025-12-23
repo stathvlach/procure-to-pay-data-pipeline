@@ -45,6 +45,82 @@
 -- =====================================================================
 
 
---
--- STATUS:
---   PLACEHOLDER
+CREATE SEQUENCE IF NOT EXISTS bootstrap.ekko_ebeln_seq
+    START 4500000000
+    INCREMENT 1;
+
+TRUNCATE TABLE bootstrap.ekko_clean;
+
+WITH
+params AS (
+    SELECT
+        1200::int AS total_pos,
+        0.70::numeric AS top_share,
+        0.20::numeric AS top_vendor_share
+),
+
+-- vendor list with stable ordering
+vendors AS (
+    SELECT lifnr, ROW_NUMBER() OVER (ORDER BY md5(lifnr || '|seed:ekko_vendors_v1')) AS rn
+    FROM operational.lfa1
+),
+vc AS (
+    SELECT COUNT(*)::int AS n_vendors FROM vendors
+),
+
+-- derive exact counts
+counts AS (
+    SELECT
+        p.total_pos,
+        (p.total_pos * p.top_share)::int AS n_top_pos,
+        (p.total_pos - (p.total_pos * p.top_share)::int) AS n_rest_pos,
+
+        LEAST((vc.n_vendors * p.top_vendor_share)::int, vc.n_vendors) AS n_top_vendors,
+        GREATEST(vc.n_vendors - LEAST((vc.n_vendors * p.top_vendor_share)::int, vc.n_vendors), 0) AS n_rest_vendors
+    FROM params p
+    CROSS JOIN vc
+),
+
+top_vendors AS (
+    SELECT lifnr, ROW_NUMBER() OVER (ORDER BY rn) AS idx
+    FROM vendors
+    WHERE rn <= (SELECT n_top_vendors FROM counts)
+),
+
+rest_vendors AS (
+    SELECT lifnr, ROW_NUMBER() OVER (ORDER BY rn) AS idx
+    FROM vendors
+    WHERE rn > (SELECT n_top_vendors FROM counts)
+),
+
+top_pos AS (
+    SELECT
+        LPAD(nextval('bootstrap.ekko_ebeln_seq')::text, 10, '0') AS ebeln,
+        '1000'::varchar(4) AS bukrs,
+        tv.lifnr,
+        CURRENT_DATE - (random() * 365 * 3)::int AS bedat,
+        'EUR'::varchar(5) AS waers
+    FROM counts c
+    CROSS JOIN generate_series(1, c.n_top_pos) g(i)
+    JOIN top_vendors tv
+      ON tv.idx = ((g.i - 1) % NULLIF((SELECT n_top_vendors FROM counts), 0)) + 1
+),
+
+
+rest_pos AS (
+    SELECT
+        LPAD(nextval('bootstrap.ekko_ebeln_seq')::text, 10, '0') AS ebeln,
+        '1000'::varchar(4) AS bukrs,
+        rv.lifnr,
+        CURRENT_DATE - (random() * 365 * 3)::int AS bedat,
+        'EUR'::varchar(5) AS waers
+    FROM counts c
+    CROSS JOIN generate_series(1, c.n_rest_pos) g(i)
+    JOIN rest_vendors rv
+      ON rv.idx = ((g.i - 1) % NULLIF((SELECT n_rest_vendors FROM counts), 0)) + 1
+)
+
+INSERT INTO bootstrap.ekko_clean (ebeln, bukrs, lifnr, bedat, waers)
+SELECT * FROM top_pos
+UNION ALL
+SELECT * FROM rest_pos;
