@@ -173,11 +173,6 @@ for telco projects
 
 MIT License - see LICENSE file for details
 
-## Contact
-
-For questions or collaboration opportunities, please reach out via [GitHub
-Issues](https://github.com/yourusername/p2p-pipeline-emulation/issues).
-
 ---
 
 *This project is part of a portfolio demonstrating data engineering capabilities for professional opportunities.*
