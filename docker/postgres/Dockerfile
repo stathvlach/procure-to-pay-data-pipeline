@@ -18,3 +18,4 @@ COPY sql/operational/config/*.sql /docker-entrypoint-initdb.d/
 COPY sql/operational/synthetic/*.sql /docker-entrypoint-initdb.d/
 
 COPY sql/bootstrap/init/*.sql /docker-entrypoint-initdb.d/
+COPY sql/bootstrap/config/*.sql /docker-entrypoint-initdb.d/

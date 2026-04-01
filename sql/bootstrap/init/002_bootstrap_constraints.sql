@@ -44,6 +44,14 @@
 -- Author : Stathis Vlachos
 -- =====================================================================
 
+ALTER TABLE bootstrap.corruption_rule
+  ADD CONSTRAINT pk_corruption_rule PRIMARY KEY (rule_code);
+
+ALTER TABLE bootstrap.table_corruption_config
+ADD CONSTRAINT fk_rule
+    FOREIGN KEY (rule_code)
+    REFERENCES bootstrap.corruption_rule(rule_code);
+
 ALTER TABLE bootstrap.ekko_clean
   ADD CONSTRAINT pk_ekko_clean PRIMARY KEY (ebeln);
 

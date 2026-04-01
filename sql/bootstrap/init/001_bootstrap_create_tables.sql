@@ -62,13 +62,13 @@ CREATE TABLE bootstrap.corruption_rule (
     rule_category TEXT    -- e.g. 'NULLS', 'RANGE', 'FORMAT', 'DUPLICATES', 'REFERENTIAL'
 );
 
--- Table-level corruption configuration (which rules apply where)
 CREATE TABLE bootstrap.table_corruption_config (
-    config_id     BIGINT,         -- surrogate identifier for the config row
-    target_table  TEXT,           -- e.g. 'EKKO', 'EKPO', 'MKPF', 'MSEG', 'RBKP', 'RSEG'
-    rule_code     TEXT,           -- references corruption_rule.rule_code (constraint in 002)
-    intensity     NUMERIC(6,4),    -- e.g. 0.0500 = 5% corruption rate
-    enabled       BOOLEAN         -- whether the rule is active for this table
+    config_id              BIGSERIAL PRIMARY KEY,
+    target_table           TEXT NOT NULL,
+    target_column          TEXT,              -- NULL = table-level rule
+    rule_code              TEXT NOT NULL,
+    assignment_probability NUMERIC(6,4) NOT NULL,
+    enabled                BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- Rule parameterization (rule-specific options per config)
