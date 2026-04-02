@@ -48,10 +48,12 @@ services:
     depends_on:
       - db
     environment:
+      &airflow-common-env
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://nano_mm:nano_mm@db:5432/nano_mm
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__FERNET_KEY: ""
+      PYTHONPATH: "/opt/airflow/src"
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
@@ -65,11 +67,7 @@ services:
     container_name: airflow-scheduler
     depends_on:
         - db
-    environment:
-        AIRFLOW__CORE__EXECUTOR: SequentialExecutor
-        AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://nano_mm:nano_mm@db:5432/nano_mm
-        AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-        AIRFLOW__CORE__FERNET_KEY: ""
+    environment: *airflow-common-env
     volumes:
         - ./airflow/dags:/opt/airflow/dags
         - ./airflow/logs:/opt/airflow/logs
