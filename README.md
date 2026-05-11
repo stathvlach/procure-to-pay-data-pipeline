@@ -29,11 +29,9 @@ Please find elaborated explanation on the schema architecture in the file nano-m
 The end-to-end P2P flow is:
 
 Vendor / Material Master Data
-          ↓
-Purchase Requisitions (EBAN)
-          ↓
+         ↓
 Purchase Orders (EKKO / EKPO)
-          ↓
+         ↓
 Goods Receipts / Invoices (EKBE / MSEG / RSEG)
 
 Each layer is generated sequentially with controlled dependencies and business logic constraints.
@@ -89,10 +87,10 @@ for telco projects
 
 ## Key Features
 
-- ✅ **SAP MM Schema Compliance**: Accurate replication of SAP table structures and naming conventions
-- ✅ **Realistic Data Generation**: Synthetic data that mirrors real procurement patterns
-- ✅ **Orchestration**: Airflow-managed dependencies and scheduling
-- ✅ **Containerized**: Fully dockerized for easy deployment
+- **SAP MM Schema Compliance**: Accurate replication of SAP table structures and naming conventions
+- **Realistic Data Generation**: Synthetic data that mirrors real procurement patterns
+- **Orchestration**: Airflow-managed dependencies and scheduling
+- **Containerized**: Fully dockerized for easy deployment
 
 ## Skills Demonstrated
 
