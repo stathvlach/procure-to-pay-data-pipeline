@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Project : Procure-to-Pay Data Platform
--- Layer   : bootstrap
+-- Layer   : operational
 -- Folder  : synthetic
 -- File    : 310_generate_EKPO_clean.sql
 --
@@ -17,7 +17,7 @@
 --   The dataset produced here serves as the "clean" baseline used to:
 --     - Export landing files (CSV / JSON / XML), and
 --     - Act as input for controlled corruption scenarios defined
---       in subsequent bootstrap scripts.
+--       in subsequent operational scripts.
 --
 --   No corruption rules are applied in this script. All records comply
 --   with expected structural and business-level constraints.
@@ -30,10 +30,10 @@
 --
 -- Outputs:
 --   Clean synthetic EKPO dataset, persisted temporarily within the
---   bootstrap schema and/or exported as landing files.
+--   operational schema and/or exported as landing files.
 --
 -- Execution Context:
---   Executed as part of the bootstrap synthetic data generation workflow.
+--   Executed as part of the operational synthetic data generation workflow.
 --   Typically run prior to the corresponding corrupted data generator.
 --
 -- Notes:
@@ -44,7 +44,7 @@
 -- Author: Stathis Vlachos
 -- =====================================================================
 
-TRUNCATE TABLE bootstrap.ekpo_clean;
+TRUNCATE TABLE operational.ekpo CASCADE;
 
 WITH
 params AS (
@@ -60,7 +60,7 @@ vendor_po_counts AS (
     SELECT
         lifnr,
         COUNT(*)::int AS po_cnt
-    FROM bootstrap.ekko_clean
+    FROM operational.ekko
     GROUP BY lifnr
 ),
 
@@ -94,7 +94,7 @@ ekko_classified AS (
 	        WHEN tv.lifnr IS NOT NULL THEN 1
         	ELSE 0
         END AS is_top_vendor_po
-    FROM bootstrap.ekko_clean e
+    FROM operational.ekko e
     LEFT JOIN top_vendors tv
       ON tv.lifnr = e.lifnr
 ),
@@ -193,7 +193,7 @@ items_with_masterdata AS (
 1)
 )
 
-INSERT INTO bootstrap.ekpo_clean (ebeln, ebelp, matnr, werks, menge, meins, netpr, peinh, netwr)
+INSERT INTO operational.ekpo (ebeln, ebelp, matnr, werks, menge, meins, netpr, peinh, netwr)
 SELECT
     ebeln,
     ebelp,

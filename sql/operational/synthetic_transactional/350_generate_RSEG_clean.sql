@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Project : Procure-to-Pay Data Platform
--- Layer   : bootstrap
+-- Layer   : operational
 -- Folder  : synthetic
 -- File    : 350_generate_RSEG_clean.sql
 --
@@ -17,7 +17,7 @@
 --   The dataset produced here serves as the "clean" baseline used to:
 --     - Export landing files (CSV / JSON / XML), and
 --     - Act as input for controlled corruption scenarios defined
---       in subsequent bootstrap scripts.
+--       in subsequent operational scripts.
 --
 --   No corruption rules are applied in this script. All records comply
 --   with expected structural and business-level constraints.
@@ -30,10 +30,10 @@
 --
 -- Outputs:
 --   Clean synthetic RSEG dataset, persisted temporarily within the
---   bootstrap schema and/or exported as landing files.
+--   operational schema and/or exported as landing files.
 --
 -- Execution Context:
---   Executed as part of the bootstrap synthetic data generation workflow.
+--   Executed as part of the operational synthetic data generation workflow.
 --   Typically run prior to the corresponding corrupted data generator.
 --
 -- Notes:

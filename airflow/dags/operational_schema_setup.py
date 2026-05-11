@@ -26,7 +26,7 @@ with DAG(
     synthetic_task = PythonOperator(
         task_id="load_synthetic_data",
         python_callable=run_sql_folder,
-        op_args=["operational/synthetic"]
+        op_args=["operational/synthetic_master"]
     )
 
     init_task >> config_task >> synthetic_task

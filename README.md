@@ -1,20 +1,17 @@
 # Procure-to-Pay Data Pipeline Emulation
 
-A production-grade data engineering portfolio project that emulates an SAP MM (Materials Management) Procure-to-Pay data
+A data engineering portfolio project that emulates an SAP MM (Materials Management) Procure-to-Pay data
 pipeline using PostgreSQL, Python, and Apache Airflow.
 
 ## Overview
 
-This project demonstrates end-to-end data engineering capabilities by recreating a subset of the SAP MM schema and
-implementing a complete data pipeline workflow. It showcases real-world experience with:
+This project demonstrates data engineering capabilities by recreating a subset of the SAP MM schema and
+implementing a data pipeline workflow. It showcases real-world experience with:
 - SAP MM domain knowledge (procurement processes, master data structures)
 - Modern data engineering stack (PostgreSQL, Docker, Airflow)
 - ETL/ELT pipeline development
-- Data warehouse design and dimensional modeling
 
 ## Architecture
-
-The system is organized into three distinct PostgreSQL schemas, each serving a specific purpose in the data pipeline:
 
 ### 1. Operational Schema
 The transactional layer containing:
@@ -25,59 +22,39 @@ The transactional layer containing:
 Follows SAP MM naming conventions for tables (e.g., `EKKO`, `EKPO`, `EBAN`, `MARA`, `LFA1`) and fields, maintaining data
 types and relationships consistent with the SAP data model.
 
-### 2. Bootstrap Schema
-The data generation and staging layer:
-- **Synthetic data generation**: SQL scripts produce clean, realistic procurement data
-- **Data corruption**: Intentional introduction of data quality issues (duplicates, missing values, format
-inconsistencies, referential integrity violations)
-- **Multi-format extraction**: Exports data to staging directory in various formats (XML, CSV, XLSX, JSON)
-- **Testing scenarios**: Provides corrupted datasets to validate data cleansing and transformation logic
+Please find elaborated explanation on the schema architecture in the file nano-mm-explained.md
 
-### 3. Warehouse Schema
-The analytical layer containing:
-- **Fact tables**: Aggregated procurement metrics (spend analysis, order fulfillment, invoice accuracy)
-- **Dimension tables**: Time, material, vendor, purchasing organization dimensions
-- **KPIs and metrics**: Procurement cycle time, PO accuracy rate, vendor performance indicators
-- **Pre-aggregated views**: Optimized for reporting and analytics
+### 2. Data Pipeline Flow
 
-### Data Flow
+The end-to-end P2P flow is:
 
-```
-Bootstrap Schema          Staging Directory         Operational Schema         Warehouse Schema
-    │                           │                          │                         │
-    │ Generate synthetic data   │                          │                         │
-    ├──────────────────────────>│                          │                         │
-    │                           │                          │                         │
-    │ Apply corruption rules    │                          │                         │
-    ├──────────────────────────>│                          │                         │
-    │                           │                          │                         │
-    │ Export (XML/CSV/XLSX)     │                          │                         │
-    ├──────────────────────────>│                          │                         │
-    │                           │                          │                         │
-    │                           │ Ingest & cleanse         │                         │
-    │                           ├─────────────────────────>│                         │
-    │                           │                          │                         │
-    │                           │                          │ Transform & aggregate   │
-    │                           │                          ├────────────────────────>│
-    │                           │                          │                         │
-    │                           │                          │    Calculate KPIs       │
-    │                           │                          │<────────────────────────┤
-```
+Vendor / Material Master Data
+          ↓
+Purchase Requisitions (EBAN)
+          ↓
+Purchase Orders (EKKO / EKPO)
+          ↓
+Goods Receipts / Invoices (EKBE / MSEG / RSEG)
 
-All orchestration is managed by Apache Airflow DAGs that handle:
-- Data generation scheduling
-- File format conversions
-- Data quality checks
-- ETL job dependencies
-- Error handling and notifications
+Each layer is generated sequentially with controlled dependencies and business logic constraints.
+
+### 3. Airflow Orchestration
+
+The pipeline is orchestrated using Apache Airflow DAGs:
+
+operational_schema_setup ->  initializes schema and master data
+populate_purchase_orders -> generates EKKO/EKPO datasets
+
+Execution is triggered via external startup scripts:
+
+airflow dags trigger populate_purchase_orders
 
 ## Technology Stack
 
 - **Database**: PostgreSQL (multi-schema design)
 - **Orchestration**: Apache Airflow
-- **Language**: Python (data generation, transformations)
+- **Language**: SQL, Python
 - **Containerization**: Docker & Docker Compose
-- **Data Formats**: XML, CSV, XLSX, JSON
 
 ## Project Goals
 
@@ -87,9 +64,6 @@ This project serves as a portfolio demonstration for Data Engineering positions,
 for telco projects
 2. **ETL Development Skills**: Proven capabilities from experience as an ETL Developer working with SAS/Oracle SQL
 3. **Modern Data Stack**: Proficiency with current data engineering tools and best practices
-4. **Data Pipeline Design**: End-to-end pipeline implementation from source to warehouse
-5. **Data Quality Engineering**: Handling real-world data quality challenges
-
 
 ## Installation & Setup
 
@@ -100,46 +74,23 @@ for telco projects
    ```
 
 2. **Start the environment**
+   For linux:
+
    ```bash
-   docker-compose up -d
+   run_demo.sh
    ```
-
-   This will start:
-   - PostgreSQL database (port 5432)
-
-
-3. **Verify installation**
+   For Windows:
    ```bash
-   docker-compose exec postgres psql -U postgres -c "\dn"
+   run_demo.bat
    ```
-   You should see the three schemas: `operational`, `bootstrap`, and `warehouse`.
-
-## Project Structure
-
-```
-.
-├── docker/
-├── docs/
-├── └── nano-mm-explained.md
-├── sql/             # SQL scripts
-│   ├── analytics/
-│   ├── bootstrap/
-│   ├── staging/
-│   └── operational/
-│
-├── docker-compose.yml
-├── LICENSE
-├── nano_mm_erd.png
-└── README.md
-```
+3. **Verify results**
+   The run_demo script will open the airflow web monitor as well as the adminer web interface in the default web browser for your system.
+   Please feel free to explore the tables of the database and the execution logs of the airflow dags
 
 ## Key Features
 
 - ✅ **SAP MM Schema Compliance**: Accurate replication of SAP table structures and naming conventions
 - ✅ **Realistic Data Generation**: Synthetic data that mirrors real procurement patterns
-- ✅ **Data Quality Scenarios**: Intentional corruption for testing cleansing logic
-- ✅ **Multi-format Support**: Handles XML, CSV, XLSX, JSON file formats
-- ✅ **Dimensional Modeling**: Star schema design in warehouse layer
 - ✅ **Orchestration**: Airflow-managed dependencies and scheduling
 - ✅ **Containerized**: Fully dockerized for easy deployment
 
@@ -147,8 +98,6 @@ for telco projects
 
 **Data Engineering**
 - ETL/ELT pipeline design and implementation
-- Data warehouse dimensional modeling
-- Data quality and validation frameworks
 - Workflow orchestration with Airflow
 
 **Database & SQL**
@@ -161,7 +110,6 @@ for telco projects
 - SAP MM procurement processes
 - P2P cycle understanding
 - Master data management
-- Procurement analytics and KPIs
 
 **DevOps**
 - Docker containerization

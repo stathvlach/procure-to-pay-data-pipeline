@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Project : Procure-to-Pay Data Platform
--- Layer   : bootstrap
+-- Layer   : operational
 -- Folder  : synthetic
 -- File    : 300_generate_EKKO_clean.sql
 --
@@ -17,7 +17,7 @@
 --   The dataset produced here serves as the "clean" baseline used to:
 --     - Export landing files (CSV / JSON / XML), and
 --     - Act as input for controlled corruption scenarios defined
---       in subsequent bootstrap scripts.
+--       in subsequent operational scripts.
 --
 --   No corruption rules are applied in this script. All records comply
 --   with expected structural and business-level constraints.
@@ -30,10 +30,10 @@
 --
 -- Outputs:
 --   Clean synthetic EKKO dataset, persisted temporarily within the
---   bootstrap schema and/or exported as landing files.
+--   operational schema and/or exported as landing files.
 --
 -- Execution Context:
---   Executed as part of the bootstrap synthetic data generation workflow.
+--   Executed as part of the operational synthetic data generation workflow.
 --   Typically run prior to the corresponding corrupted data generator.
 --
 -- Notes:
@@ -44,12 +44,11 @@
 -- Author: Stathis Vlachos
 -- =====================================================================
 
-
-CREATE SEQUENCE IF NOT EXISTS bootstrap.ekko_ebeln_seq
+CREATE SEQUENCE IF NOT EXISTS ekko_ebeln_seq
     START 4500000000
     INCREMENT 1;
 
-TRUNCATE TABLE bootstrap.ekko_clean;
+TRUNCATE TABLE operational.ekko CASCADE;
 
 WITH
 params AS (
@@ -95,7 +94,7 @@ rest_vendors AS (
 
 top_pos AS (
     SELECT
-        LPAD(nextval('bootstrap.ekko_ebeln_seq')::text, 10, '0') AS ebeln,
+        LPAD(nextval('ekko_ebeln_seq')::text, 10, '0') AS ebeln,
         '1000'::varchar(4) AS bukrs,
         tv.lifnr,
         CURRENT_DATE - (random() * 365 * 3)::int AS bedat,
@@ -109,7 +108,7 @@ top_pos AS (
 
 rest_pos AS (
     SELECT
-        LPAD(nextval('bootstrap.ekko_ebeln_seq')::text, 10, '0') AS ebeln,
+        LPAD(nextval('ekko_ebeln_seq')::text, 10, '0') AS ebeln,
         '1000'::varchar(4) AS bukrs,
         rv.lifnr,
         CURRENT_DATE - (random() * 365 * 3)::int AS bedat,
@@ -120,7 +119,7 @@ rest_pos AS (
       ON rv.idx = ((g.i - 1) % NULLIF((SELECT n_rest_vendors FROM counts), 0)) + 1
 )
 
-INSERT INTO bootstrap.ekko_clean (ebeln, bukrs, lifnr, bedat, waers)
+INSERT INTO operational.ekko (ebeln, bukrs, lifnr, bedat, waers)
 SELECT * FROM top_pos
 UNION ALL
 SELECT * FROM rest_pos;

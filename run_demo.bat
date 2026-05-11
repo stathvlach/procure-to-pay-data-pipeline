@@ -5,8 +5,8 @@ echo.
 echo === CLEAN RESET ===
 echo [1/8] Stopping containers and removing volumes...
 docker compose down -v
+
 echo [2/8] Recreating Airflow directories...
-if not exist airflow\dags mkdir airflow\dags
 if not exist airflow\logs mkdir airflow\logs
 if not exist airflow\plugins mkdir airflow\plugins
 
@@ -24,7 +24,8 @@ set /a attempt=0
 docker inspect --format="{{.State.Health.Status}}" nano-mm-db >nul 2>&1
 if errorlevel 1 (
     if !attempt! lss !max_attempts! (
-        timeout /t 2 /nobreak >nul
+        timeout /t 3 /nobreak >nul
+		echo waiting...
         set /a attempt=!attempt!+1
         goto health_check_loop
     ) else (
@@ -89,20 +90,24 @@ echo Opening Airflow UI...
 :wait_airflow
 curl -s http://localhost:8080 >nul 2>&1
 if errorlevel 1 (
-	echo wait...
+	echo waiting...
     timeout /t 4 >nul
     goto wait_airflow
 )
 
+docker exec -it airflow-scheduler airflow dags unpause operational_schema_setup
+docker exec -it airflow-scheduler airflow dags trigger operational_schema_setup
+
+docker exec -it airflow-scheduler airflow dags unpause populate_purchase_orders
+
 start "" "http://localhost:8080"
 
-echo Username: airflow
-echo Password: airflow
+echo Username/Password: admin/admin
 
 echo Opening Adminer UI...
 
 start "" "http://localhost:8081/?pgsql=db&username=nano_mm&db=nano_mm&ns=operational&schema="
 
-echo Password: nano_mm
+echo Username/Password: nano_mm/nano_mm
 
 endlocal
