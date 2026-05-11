@@ -14,12 +14,13 @@ implementing a data pipeline workflow. It showcases real-world experience with:
 ## Architecture
 
 ### 1. Operational Schema
+
 The transactional layer containing:
 - **Real-time transaction data**: Purchase requisitions, purchase orders, goods receipts, invoices, payments
 - **Master data**: Material masters, vendor masters, purchasing info records
 - **Configuration data**: Plants, storage locations, purchasing organizations, company codes
 
-Follows SAP MM naming conventions for tables (e.g., `EKKO`, `EKPO`, `EBAN`, `MARA`, `LFA1`) and fields, maintaining data
+Follows SAP MM naming conventions for tables (e.g., `EKKO`, `EKPO`, `MARA`, `LFA1`, etc) and fields, maintaining data
 types and relationships consistent with the SAP data model.
 
 Please find elaborated explanation on the schema architecture in the file nano-mm-explained.md
@@ -29,9 +30,9 @@ Please find elaborated explanation on the schema architecture in the file nano-m
 The end-to-end P2P flow is:
 
 Vendor / Material Master Data
-         ↓
+
 Purchase Orders (EKKO / EKPO)
-         ↓
+
 Goods Receipts / Invoices (EKBE / MSEG / RSEG)
 
 Each layer is generated sequentially with controlled dependencies and business logic constraints.
@@ -40,13 +41,19 @@ Each layer is generated sequentially with controlled dependencies and business l
 
 The pipeline is orchestrated using Apache Airflow DAGs:
 
+```bash
 operational_schema_setup ->  initializes schema and master data
+```
+
+```bash
 populate_purchase_orders -> generates EKKO/EKPO datasets
+```
 
 Execution is triggered via external startup scripts:
 
+```bash
 airflow dags trigger populate_purchase_orders
-
+```
 ## Technology Stack
 
 - **Database**: PostgreSQL (multi-schema design)
@@ -72,6 +79,7 @@ for telco projects
    ```
 
 2. **Start the environment**
+
    For linux:
 
    ```bash
@@ -82,6 +90,7 @@ for telco projects
    run_demo.bat
    ```
 3. **Verify results**
+
    The run_demo script will open the airflow web monitor as well as the adminer web interface in the default web browser for your system.
    Please feel free to explore the tables of the database and the execution logs of the airflow dags
 
