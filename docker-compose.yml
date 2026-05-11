@@ -70,12 +70,13 @@ services:
           AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://nano_mm:nano_mm@db:5432/nano_mm
           AIRFLOW__CORE__LOAD_EXAMPLES: "false"
           AIRFLOW__CORE__FERNET_KEY: ""
-          PYTHONPATH: "/opt/airflow/dags"
+          PYTHONPATH: "/opt/airflow/src"
         volumes:
           - ./airflow/dags:/opt/airflow/dags
           - ./airflow/logs:/opt/airflow/logs
           - ./airflow/plugins:/opt/airflow/plugins
-          - ./sql:/opt/airflow/src/sql
+          - ./src:/opt/airflow/src/
+          - ./sql:/opt/airflow/sql
         ports:
           - "8080:8080"
         command: webserver
@@ -90,6 +91,7 @@ services:
             - ./airflow/dags:/opt/airflow/dags
             - ./airflow/logs:/opt/airflow/logs
             - ./airflow/plugins:/opt/airflow/plugins
-            - ./sql:/opt/airflow/src/sql
+            - ./src:/opt/airflow/src/
+            - ./sql:/opt/airflow/sql
         command: scheduler
     
