@@ -1,79 +1,95 @@
 services:
-  db:
-    build:
-      context: .
-      dockerfile: docker/postgres/Dockerfile
-    container_name: nano-mm-db
-    environment:
-      POSTGRES_DB: nano_mm
-      POSTGRES_USER: nano_mm
-      POSTGRES_PASSWORD: nano_mm
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - nano_mm_data:/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nano_mm -d nano_mm"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+    db:
+      image: postgres:16-alpine
+      container_name: nano-mm-db
+      environment:
+        POSTGRES_DB: nano_mm
+        POSTGRES_USER: nano_mm
+        POSTGRES_PASSWORD: nano_mm
+      ports:
+        - "5432:5432"
+      restart: unless-stopped
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U nano_mm -d nano_mm"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
 
-  airflow-init:
-    image: apache/airflow:2.8.1
-    container_name: airflow-init
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://nano_mm:nano_mm@db:5432/nano_mm
-      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__CORE__FERNET_KEY: ""
-    entrypoint: /bin/bash
-    command:
-      - -c
-      - |
-        for i in 1 2 3 4 5; do
-          airflow db migrate && break
-          echo "Airflow DB not ready yet, retrying in 3s..."
-          sleep 3
-        done
-        airflow db migrate
-        airflow users create --username airflow --password airflow --firstname admin --lastname admin --role Admin --email admin@local
+    adminer:
+        image: adminer:latest
+        container_name: nano-mm-adminer
+        depends_on:
+          db:
+            condition: service_healthy
+        ports:
+          - "8081:8080"
+        restart: unless-stopped 
+  
+    airflow-init:
+        image: apache/airflow:2.8.1
+        container_name: airflow-init
+        depends_on:
+          db:
+            condition: service_healthy
+        environment:
+          AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://nano_mm:nano_mm@db:5432/nano_mm
+          AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+          AIRFLOW__CORE__FERNET_KEY: ""
+        entrypoint: /bin/bash
+        command:
+            - -c
+            - |
+              set -e
 
-  airflow-webserver:
-    image: apache/airflow:2.8.1
-    container_name: airflow-webserver
-    depends_on:
-      - db
-    environment:
-      &airflow-common-env
-      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://nano_mm:nano_mm@db:5432/nano_mm
-      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__CORE__FERNET_KEY: ""
-      PYTHONPATH: "/opt/airflow/src"
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
-    ports:
-      - "8080:8080"
-    command: webserver
+              airflow db migrate
 
-  airflow-scheduler:
-    image: apache/airflow:2.8.1
-    container_name: airflow-scheduler
-    depends_on:
-        - db
-    environment: *airflow-common-env
-    volumes:
-        - ./airflow/dags:/opt/airflow/dags
-        - ./airflow/logs:/opt/airflow/logs
-        - ./airflow/plugins:/opt/airflow/plugins
-    command: scheduler
+              airflow users create \
+                --username admin \
+                --password admin \
+                --firstname admin \
+                --lastname admin \
+                --role Admin \
+                --email admin@local || true
 
-volumes:
-  pgdata:
-  nano_mm_data:
+              airflow connections add postgres_default \
+                --conn-type postgres \
+                --conn-host db \
+                --conn-schema nano_mm \
+                --conn-login nano_mm \
+                --conn-password nano_mm \
+                --conn-port 5432 || true
+
+    airflow-webserver:
+        image: apache/airflow:2.8.1
+        container_name: airflow-webserver
+        depends_on:
+          - db
+        environment:
+          &airflow-common-env
+          AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+          AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://nano_mm:nano_mm@db:5432/nano_mm
+          AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+          AIRFLOW__CORE__FERNET_KEY: ""
+          PYTHONPATH: "/opt/airflow/dags"
+        volumes:
+          - ./airflow/dags:/opt/airflow/dags
+          - ./airflow/logs:/opt/airflow/logs
+          - ./airflow/plugins:/opt/airflow/plugins
+          - ./sql:/opt/airflow/src/sql
+        ports:
+          - "8080:8080"
+        command: webserver
+
+    airflow-scheduler:
+        image: apache/airflow:2.8.1
+        container_name: airflow-scheduler
+        depends_on:
+            - db
+        environment: *airflow-common-env
+        volumes:
+            - ./airflow/dags:/opt/airflow/dags
+            - ./airflow/logs:/opt/airflow/logs
+            - ./airflow/plugins:/opt/airflow/plugins
+            - ./sql:/opt/airflow/src/sql
+        command: scheduler
+    

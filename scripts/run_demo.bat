@@ -3,16 +3,16 @@ setlocal enabledelayedexpansion
 
 echo.
 echo === CLEAN RESET ===
-echo [1/7] Stopping containers and removing volumes...
+echo [1/8] Stopping containers and removing volumes...
 docker compose down -v
-echo [2/7] Recreating Airflow directories...
+echo [2/8] Recreating Airflow directories...
 if not exist airflow\dags mkdir airflow\dags
 if not exist airflow\logs mkdir airflow\logs
 if not exist airflow\plugins mkdir airflow\plugins
 
 echo.
 echo === START DATABASE ===
-echo [3/7] Starting PostgreSQL and showing init logs...
+echo [3/8] Starting PostgreSQL and showing init logs...
 docker compose up --build -d db
 
 REM Start logs in a separate window and capture the PID concept differently
@@ -45,8 +45,17 @@ if errorlevel 1 (
 echo PostgreSQL is healthy.
 echo.
 
+echo === ADMINER INIT ===
+echo [4/8] Initializing Adminer...
+docker compose up -d adminer
+if errorlevel 1 (
+    timeout /t 3 >nul
+    exit /b 1
+)
+echo.
+
 echo === AIRFLOW INIT ===
-echo [4/7] Initializing Airflow...
+echo [5/8] Initializing Airflow...
 docker compose run --rm airflow-init
 if errorlevel 1 (
     echo ERROR: Airflow initialization failed
@@ -55,14 +64,14 @@ if errorlevel 1 (
 echo.
 
 echo === START AIRFLOW ===
-echo [5/7] Starting Airflow webserver...
+echo [6/8] Starting Airflow webserver...
 docker compose up -d airflow-webserver
 if errorlevel 1 (
     echo ERROR: Failed to start Airflow webserver
     exit /b 1
 )
 
-echo [6/7] Starting Airflow scheduler...
+echo [7/8] Starting Airflow scheduler...
 docker compose up -d airflow-scheduler
 if errorlevel 1 (
     echo ERROR: Failed to start Airflow scheduler
@@ -70,13 +79,30 @@ if errorlevel 1 (
 )
 echo.
 
-echo [7/7] Showing running services...
+echo [8/8] Showing running services...
 docker compose ps
 echo.
 
 echo === DONE ===
-echo Airflow UI: http://localhost:8080
+echo Opening Airflow UI...
+
+:wait_airflow
+curl -s http://localhost:8080 >nul 2>&1
+if errorlevel 1 (
+	echo wait...
+    timeout /t 4 >nul
+    goto wait_airflow
+)
+
+start "" "http://localhost:8080"
+
 echo Username: airflow
 echo Password: airflow
+
+echo Opening Adminer UI...
+
+start "" "http://localhost:8081/?pgsql=db&username=nano_mm&db=nano_mm&ns=operational&schema="
+
+echo Password: nano_mm
 
 endlocal
